@@ -46,7 +46,6 @@ const register = async (req,res) => {
 const login = async (req,res) => {
     const {username,password} = req.body;
     const user = await User.findOne({ username })
-    console.log(user);
     try {
     if (user===null) {
         const context = {msg: "No user was found"}
