@@ -23,16 +23,17 @@ const registerPage = async (req,res) => {
 
 const register = async (req,res) => {
     try {
-        console.log(req.body);
         if (req.body.password === req.body.password2) {
-            const user = await User.create(
+            bcrypt.hash(req.body.password, saltRounds, async(err,hash) => {
+            await User.create(
                 { username: req.body.username,
-                password: req.body.password,
+                password: hash,
                 monthly_salary: req.body.monthly_salary,
                 gender: req.body.gender,
                 dob: req.body.dob,
                 });
-            res.send(user);
+            res.redirect("/login");
+        });
         } else {
             res.render("users/register", {msg: "Your passwords do not match"});
             return;
@@ -40,11 +41,45 @@ const register = async (req,res) => {
     } catch(err) {
             res.send(404, "Error creating user");
         }
-    
 }
+
+const login = async (req,res) => {
+    const {username,password} = req.body;
+    const user = await User.findOne({ username })
+    console.log(user);
+    try {
+    if (user===null) {
+        const context = {msg: "No user was found"}
+        res.render("users/login", context);
+        return;
+    }
+    bcrypt.compare(password, user.password, (err, result) => {
+        if (result) {
+        req.session.userid = user._id;
+        res.redirect("/dashboard");
+        } else {
+        const context = { msg: "Password is wrong" };
+        res.render("users/login", context);
+        }
+    });
+    } catch(err) {
+        res.send(404, "Error with login");
+    }
+}
+
+const home = async (req, res) => {
+    res.render('home', {title: "SaveLah!"});
+};
+
+const dashboard = async (req, res) => {
+    res.render('index', {title: "SaveLah!"});
+};
 
 module.exports = {
     loginPage,
     registerPage,
-    register
+    register,
+    login,
+    home,
+    dashboard
 };
