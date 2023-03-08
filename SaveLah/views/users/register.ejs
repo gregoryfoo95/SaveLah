@@ -1,0 +1,27 @@
+<%- include('../partials/header') %>
+
+    <h2>Registration Form</h2>
+    <form action="/register" method="post">
+        <fieldset>
+            <legend>Registration</legend>
+            <label>Username: <input name="username" /></label>
+            <br />
+            <label>Password: <input type="password" name="password" /></label>
+            <br />
+            <label>Confirm Password: <input type="password" name="password" /></label>
+            <br />
+            <label>Monthly Salary ($/mth): <input name="monthly_salary" /></label>
+            <br />
+            <label>Gender:</label>
+            <select name="gender">
+                <option value="M">M</option>
+                <option value="F">F</option>
+                <option value="NA">NA</option>
+            </select>
+            <br />
+            <label>Date of Birth: <input type="date" name="dob"/></label>
+            <br />
+            <button>Register</button>
+        </fieldset>
+    </form>
+<%- include('../partials/footer') %>

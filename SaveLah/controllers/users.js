@@ -10,11 +10,17 @@ const saltRounds = 10;
  * @returns
  */
 
-const index = async (req,res) => {
+const loginPage = async (req,res) => {
     const context = {msg: ""};
     res.render("users/login",context);
 }
 
+const registerPage = async (req,res) => {
+    const context = {msg: ""};
+    res.render("users/register",context);
+}
+
 module.exports = {
-    index,
+    loginPage,
+    registerPage,
 };
