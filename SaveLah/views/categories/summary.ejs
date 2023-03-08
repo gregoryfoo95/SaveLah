@@ -1,0 +1,19 @@
+<%- include('../partials/header') %>
+
+    <h2>All Categories</h2>
+    <nav>
+        <form action="/categories" method="POST">
+            <label>Add category: <input name="category_name"/></label>
+            <input type="submit">   </input>
+        </form>
+    </nav>
+
+    <table id="categoryList">
+        <thead>
+            <tr>
+                <th>Category Name</th>
+            </tr>
+        </thead>
+    </table>
+
+<%- include('../partials/footer') %>
