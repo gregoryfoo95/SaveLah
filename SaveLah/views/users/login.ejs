@@ -1,0 +1,14 @@
+<%- include('../partials/header') %>
+
+    <h2>Login Form</h2>
+        <form action="/login" method="post">
+            <fieldset>
+                <legend>Login</legend>
+                <label>Userid: <input name="userid" /></label>
+                <br />
+                <label>Password: <input name="password" /></label>
+                <input type="hidden" value="secret"/>
+                <button>Login</button>
+            </fieldset>
+        </form>
+<%- include('../partials/footer') %>
