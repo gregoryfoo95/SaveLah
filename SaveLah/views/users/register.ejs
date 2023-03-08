@@ -1,6 +1,7 @@
 <%- include('../partials/header') %>
 
     <h2>Registration Form</h2>
+    <%=msg%>
     <form action="/register" method="post">
         <fieldset>
             <legend>Registration</legend>
@@ -8,7 +9,7 @@
             <br />
             <label>Password: <input type="password" name="password" /></label>
             <br />
-            <label>Confirm Password: <input type="password" name="password" /></label>
+            <label>Confirm Password: <input type="password" name="password2" /></label>
             <br />
             <label>Monthly Salary ($/mth): <input name="monthly_salary" /></label>
             <br />
