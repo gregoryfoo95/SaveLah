@@ -11,6 +11,10 @@ const categorySchema = new Schema(
               required: true,
               ref: "User",
     },
+
+    budget: {type: Number,
+             required: true,
+    },
   },
   
   {

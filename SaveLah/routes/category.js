@@ -13,6 +13,8 @@ const isAuth = async (req, res, next) => {
   }
 };
 
-router.get("/categories/all", isAuth, categoryCtrl.summary);
-router.post("/categories", isAuth, categoryCtrl.create);
+router.get("/all", isAuth, categoryCtrl.summary);
+router.post("/", isAuth, categoryCtrl.create);
+router.get("/:id/edit", isAuth, categoryCtrl.editForm);
+router.put("/:id", isAuth, categoryCtrl.edit);
 module.exports = router;

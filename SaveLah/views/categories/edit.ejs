@@ -1,0 +1,23 @@
+<%- include('../partials/header')%>
+
+<h2>
+    Edit Category & Budget: <%=category.category_name%>
+</h2>
+
+<%=msg%>
+<form action="/categories/<%= category._id%>?_method=PUT" method="POST">
+    <fieldset>
+        <legend>Edit Form</legend>
+    <label>Category:
+        <input type="text" name="category_name" value="<%=category.category_name%>">
+    </label>
+    <br>
+    <label>Budget:
+        <input type="number" name="budget" value="<%=category.budget%>">
+    </label>
+    <br>
+    <button type="submit">Amend</button>
+    </fieldset>
+</form>
+
+<%- include('../partials/footer')%>
