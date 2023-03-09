@@ -67,11 +67,18 @@ const login = async (req,res) => {
 }
 
 const home = async (req, res) => {
-    res.render('home', {title: "SaveLah!"});
+    res.render('home', {
+        title: "SaveLah!",
+    });
 };
 
 const dashboard = async (req, res) => {
-    res.render('index', {title: "SaveLah!"});
+    const {username,password} = req.body;
+    const user = await User.findOne({ username })
+    const context = {user }
+    res.render('index', {
+        title: "SaveLah!",
+    });
 };
 
 module.exports = {

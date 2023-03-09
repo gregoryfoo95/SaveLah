@@ -8,8 +8,14 @@ const Category = require("../models/Category");
 
 
 const summary = async (req,res) => {
-    const context = {msg: ""};
-    res.render("categories/summary",context);
+    try {
+        const categories = await Category.find().exec();
+        const context = {msg: "",
+                        categories};
+        res.render("categories/summary", context);
+    } catch(err) {
+        res.send(404,"Categories cannot be shown")
+    }
 }
 
 const create = async (req, res) => {
@@ -17,13 +23,15 @@ const create = async (req, res) => {
         await Category.create(
             {
                 category_name: req.body.category_name,
-                user_id: req.body.user_id, 
             });
-            res.redirect("/categories");
+        const categories = await Category.find().exec();    
+        const msg = `You have added ${req.body.category_name}`;    
+        res.render("categories/summary", {msg,categories});
     } catch (err) {
         res.send(404, "Error adding category");
     };
 }
+
 
 module.exports = {
     summary,

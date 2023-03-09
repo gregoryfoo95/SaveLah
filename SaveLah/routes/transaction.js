@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const categoryCtrl = require("../controllers/categories");
+const transactionCtrl = require("../controllers/transactions");
 const User = require("../models/User");
 
 const isAuth = async (req, res, next) => {
@@ -14,6 +14,5 @@ const isAuth = async (req, res, next) => {
   }
 };
 
-router.get("/categories", isAuth, categoryCtrl.summary);
-router.post("/categories", isAuth, categoryCtrl.create);
+router.get("/transactions", isAuth, transactionCtrl.summary);
 module.exports = router;

@@ -1,10 +1,12 @@
 <%- include('../partials/header') %>
 
     <h2>All Categories</h2>
+    <a href="/dashboard">Dashboard</a>
+    <%=msg%>
     <nav>
         <form action="/categories" method="POST">
             <label>Add category: <input name="category_name"/></label>
-            <input type="submit">   </input>
+            <input type="submit"/>
         </form>
     </nav>
 
@@ -14,6 +16,16 @@
                 <th>Category Name</th>
             </tr>
         </thead>
+        <tbody>
+            <% categories.forEach((c,i) => { %>
+                <tr>
+                    <td>
+                        <%=c.category_name%>
+                    </td>
+                </tr>
+
+            <%}) %>
+        </tbody>
     </table>
 
 <%- include('../partials/footer') %>

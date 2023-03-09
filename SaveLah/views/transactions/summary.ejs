@@ -1,0 +1,33 @@
+<%- include('../partials/header') %>
+
+    <h2>All Transactions</h2>
+    <a href="/dashboard">Dashboard</a>
+    <%=msg%>
+        <nav>
+            <form action="/transactions" method="POST">
+                <label>Category:</label>
+                <select name="category_name">
+                    <%- categories.map(c=> `<option value=${c._id}>${c.category_name}</option>`)%>
+                </select>
+                <label>Date: <input name="date" /></label>
+                <label>Amount: <input name="amount" /></label>
+                <input type="submit" />
+            </form>
+        </nav>
+
+        <table id="transactionList">
+            <thead>
+                <tr>
+                    <th>Transactions</th>
+                </tr>
+            </thead>
+            <tbody>
+                    <tr>
+                        <td>
+                        </td>
+                    </tr>
+
+            </tbody>
+        </table>
+
+        <%- include('../partials/footer') %>
