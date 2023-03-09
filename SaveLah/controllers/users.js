@@ -32,7 +32,7 @@ const register = async (req,res) => {
                 gender: req.body.gender,
                 dob: req.body.dob,
                 });
-            res.redirect("/login");
+            res.redirect("/users/login");
         });
         } else {
             res.render("users/register", {msg: "Your passwords do not match"});

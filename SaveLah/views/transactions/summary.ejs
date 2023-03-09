@@ -6,11 +6,11 @@
         <nav>
             <form action="/transactions" method="POST">
                 <label>Category:</label>
-                <select name="category_name">
+                <select name="category_id">
                     <%- categories.map(c=> `<option value=${c._id}>${c.category_name}</option>`)%>
                 </select>
-                <label>Date: <input name="date" /></label>
-                <label>Amount: <input name="amount" /></label>
+                <label>Date: <input name="date" type="date"/></label>
+                <label>Amount: <input name="amount"  type="number" /></label>
                 <input type="submit" />
             </form>
         </nav>

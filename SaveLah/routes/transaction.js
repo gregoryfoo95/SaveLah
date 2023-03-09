@@ -7,12 +7,13 @@ const isAuth = async (req, res, next) => {
   if (req.session.userid) {
     const user = await User.findById(req.session.userid).exec();
     res.locals.user = user;
-    console.log(res.locals.user);
+    //console.log(res.locals.user);
     next();
   } else {
     res.render("users/login", {msg: "You have no authorisation rights, please try again."});
   }
 };
 
-router.get("/transactions", isAuth, transactionCtrl.summary);
+router.get("/transactions/all", isAuth, transactionCtrl.summary);
+router.post("/transactions", isAuth, transactionCtrl.create);
 module.exports = router;

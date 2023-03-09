@@ -40,7 +40,7 @@ app.use(methodOverride('_method'));
 
 
 app.use('/', indexRouter);
-app.use('/', usersRouter);
+app.use('/user', usersRouter);
 app.use('/', categoryRouter)
 app.use('/', transactionRouter);
 

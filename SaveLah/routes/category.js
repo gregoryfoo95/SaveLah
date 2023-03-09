@@ -7,13 +7,12 @@ const isAuth = async (req, res, next) => {
   if (req.session.userid) {
     const user = await User.findById(req.session.userid).exec();
     res.locals.user = user;
-    console.log(res.locals.user);
     next();
   } else {
     res.render("users/login", {msg: "You have no authorisation rights, please try again."});
   }
 };
 
-router.get("/categories", isAuth, categoryCtrl.summary);
+router.get("/categories/all", isAuth, categoryCtrl.summary);
 router.post("/categories", isAuth, categoryCtrl.create);
 module.exports = router;

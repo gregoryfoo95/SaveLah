@@ -1,5 +1,6 @@
 const Transaction = require("../models/Transaction");
 const Category = require("../models/Category");
+const User = require("../models/User");
 /**
  *
  * @param {import("express").Request} req
@@ -10,6 +11,7 @@ const Category = require("../models/Category");
 
 const summary = async (req,res) => {
     try {
+        console.log(req.session);
         const categories = await Category.find({}).exec()
         const transactions = await Transaction.find({}).exec();
         const context = {msg: "",
@@ -24,14 +26,17 @@ const summary = async (req,res) => {
 
 const create = async (req, res) => {
     try {
-
+        console.log(req.body);
+        const categories = await Category.find({}).exec()
         const transactions = await Transaction.create(
             {
+                category_id: req.body.category_id,
+                user_id: req.session.userid,
                 date: req.body.date,
                 amount: req.body.amount,
             });
         const msg = `You have added a transaction`;
-        res.render("transactions/summary", {msg, transactions});
+        res.render("transactions/summary", {msg, transactions, categories});
     } catch (err) {
         res.send(404, "Error adding transaction");
     };
@@ -39,4 +44,5 @@ const create = async (req, res) => {
 
 module.exports = {
     summary,
+    create
 }

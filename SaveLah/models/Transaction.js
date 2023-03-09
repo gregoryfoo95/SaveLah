@@ -6,10 +6,17 @@ const transactionSchema = new Schema(
   {
     category_id: { type: Schema.Types.ObjectId,
                 ref: "Category",
+                required:true,
     },
-    date: Date,
+    user_id: { type: Schema.Types.ObjectId,
+               ref: "User",
+               required: true,
+    },
+    date: {type: Date,
+        required:true,},
+        
     amount: {type: Number,
-            require: true,
+            required: true,
     },
   },
   

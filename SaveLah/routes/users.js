@@ -4,8 +4,8 @@ const usersCtrl = require("../controllers/users");
 const User = require("../models/User");
 
 
-router.get("/login", usersCtrl.loginPage);
-router.get("/register", usersCtrl.registerPage);
+router.get("/login/new", usersCtrl.loginPage);
+router.get("/register/new", usersCtrl.registerPage);
 router.post("/register", usersCtrl.register);
 router.post("/login", usersCtrl.login);
 module.exports = router;
