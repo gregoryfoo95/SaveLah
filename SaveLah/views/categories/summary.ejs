@@ -8,7 +8,7 @@
             <fieldset>
                 <legend>Add Category & Budget</legend>
                 <label>Category: <input name="category_name" /></label>
-                <label>Budget: <input name="budget" /></label>
+                <label>Budget: $<input name="budget" /></label>
                 <input type="submit" />
             </fieldset>            
         </form>
@@ -18,7 +18,7 @@
         <thead>
             <tr>
                 <th>Category Name</th>
-                <th>Budget (S$)</th>
+                <th>Budget ($)</th>
             </tr>
         </thead>
         <tbody>
@@ -33,6 +33,12 @@
                     <td>
                         <form action="/categories/<%=c._id%>/edit" method="get">
                             <button type="submit">Edit</button>
+                        </form>
+                    </td>
+
+                    <td>
+                        <form action="/categories/<%=c._id%>/?_method=DELETE" method="post">
+                            <button type="submit">Delete</button>
                         </form>
                     </td>
                 </tr>

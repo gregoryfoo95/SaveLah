@@ -17,4 +17,6 @@ router.get("/all", isAuth, categoryCtrl.summary);
 router.post("/", isAuth, categoryCtrl.create);
 router.get("/:id/edit", isAuth, categoryCtrl.editForm);
 router.put("/:id", isAuth, categoryCtrl.edit);
+router.delete("/:id", isAuth, categoryCtrl.del);
+
 module.exports = router;

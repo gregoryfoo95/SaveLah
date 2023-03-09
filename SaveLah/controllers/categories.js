@@ -19,8 +19,15 @@ const summary = async (req,res) => {
 }
 
 const create = async (req, res) => {
+    const {category_name, budget} = req.body;
+    const categories = await Category.find().exec();  
+    if (category_name === "" || budget === "") {
+        const context = {msg: "Category and Budget fields should not be left empty.", categories}
+        res.render("categories/summary", context);
+        return;
+    }
     try {
-        cleanUp();
+        await cleanUp(req);
         await Category.create(
             {
                 category_name: req.body.category_name,
@@ -35,6 +42,7 @@ const create = async (req, res) => {
     };
 }
 
+
 const editForm = async (req,res) => {
     const id = req.params.id;
     const category = await Category.findById(id).exec();
@@ -43,22 +51,36 @@ const editForm = async (req,res) => {
 }
 
 const edit = async (req,res) => {
-    cleanUp(req,res);
-    const id = req.params.id;
     try {
+        await cleanUp(req);
+        const id = req.params.id;
         await Category.findByIdAndUpdate(id, req.body, {new:true}).exec();
         const categories = await Category.find().exec();
         const context = {msg: `You have updated ${req.body.category_name}`, categories}
         res.render("categories/summary",context)
     } catch (err) {
-        res.send(404, "Error updating category");
+        res.status(404)
+        .json({msg: "Error updating category"})
     }
 }
 
-const cleanUp = async (req,res) => {
-    for (let key in req.body) {
-        if (req.body[key] === '') delete req.body[key];
+const del = async (req,res) => {
+    const id = req.params.id;
+    try {
+        await Category.findByIdAndDelete(id).exec();
+        const categories = await Category.find().exec();
+        const context = {msg: `You have deleted ${req.body.category_name}`, categories}
+        res.render("categories/summary",context);
+    } catch (err) {
+        res.send(404,"Error deleting category")
     }
+}
+
+const cleanUp = (data) => {
+    for (let key in data) {
+        if (data[key] === '') delete data[key];
+    }
+    return data;
 }
 
 module.exports = {
@@ -66,4 +88,5 @@ module.exports = {
     create,
     editForm,
     edit,
+    del
 }
