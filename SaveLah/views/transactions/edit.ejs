@@ -1,0 +1,33 @@
+<%- include('../partials/header')%>
+
+    <h2>
+        Edit Transaction:
+            <br>
+    </h2>
+
+    <%=msg%>
+        <form action="/transactions/<%= transaction._id%>?_method=PUT" method="POST">
+            <fieldset>
+                <legend>Edit Form</legend>
+                <label>Date:
+                    <input type="date" id="date" name="date"/>
+                </label>
+                <script>
+                    $("#date").val(new Date(transaction.date).toJSON().slice(0, 10));
+                </script>
+                <br>
+                <label>Category:
+                    <select name="category_name">
+                        <% categories.map(c => { %>
+                            <option value="<%=c._id%>" <%= (transaction.category_id._id.equals(c._id)) ? "selected" : ""%>><%= c.category_name %></option>
+                        <% }) %>
+                    </select>
+                </label>
+                <br>
+                <label>Amount: $
+                    <input type="number" name="amount" value="<%=transaction.amount%>">
+                </label>
+                <button type="submit">Amend</button>
+            </fieldset>
+        </form>
+<%- include('../partials/footer')%>

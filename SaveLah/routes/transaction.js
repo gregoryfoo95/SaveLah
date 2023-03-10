@@ -14,6 +14,9 @@ const isAuth = async (req, res, next) => {
   }
 };
 
-router.get("/transactions/all", isAuth, transactionCtrl.summary);
-router.post("/transactions", isAuth, transactionCtrl.create);
+router.get("/all", isAuth, transactionCtrl.summary);
+router.post("/", isAuth, transactionCtrl.create);
+router.get("/:id/edit", isAuth, transactionCtrl.editForm);
+router.put("/:id", isAuth, transactionCtrl.edit);
+
 module.exports = router;

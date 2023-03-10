@@ -1,6 +1,6 @@
 const Transaction = require("../models/Transaction");
 const Category = require("../models/Category");
-const User = require("../models/User");
+
 /**
  *
  * @param {import("express").Request} req
@@ -13,7 +13,6 @@ const summary = async (req,res) => {
     try {
         const categories = await Category.find().exec();
         const transactions = await Transaction.find().populate("category_id").exec();
-        console.log(transactions);
         const context = {msg: "",
                         transactions,
                         categories,
@@ -26,7 +25,6 @@ const summary = async (req,res) => {
 
 const create = async (req, res) => {
     try {
-        //console.log(req.body);
         const categories = await Category.find().exec()
         await Transaction.create(
             {
@@ -43,7 +41,36 @@ const create = async (req, res) => {
     };
 }
 
+const editForm = async (req,res) => {
+    try {
+        const transaction_id = req.params.id;
+        const transaction = await Transaction.findById(transaction_id).populate("category_id").exec();
+        console.log(new Date(transaction.date).toJSON().slice(0,10));
+        console.log(new Date().toJSON().slice(0, 10));
+        const categories = await Category.find().exec();
+        const context = {msg: "", transaction, categories};
+        res.render("transactions/edit", context);
+} catch (err) {
+    res.send(404, "Error opening edit form.")
+};
+}
+
+const edit = async (req,res) => {
+    try {
+        const id = req.params.id;
+        const transaction = await Transaction.findByIdAndUpdate(id, req.body, {new:true}).exec();
+        const transactions = await Transaction.find().populate("category_id").exec();
+        const categories = await Category.find().exec();
+        const context = {msg: `You have updated the transaction.`, transactions, transaction,categories}
+        res.render("transactions/summary", context)
+    } catch (err) {
+        res.send(404, "Error updating transaction");
+    }
+}
+
 module.exports = {
     summary,
-    create
+    create,
+    editForm,
+    edit
 }
