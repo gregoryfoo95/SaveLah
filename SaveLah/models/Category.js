@@ -14,6 +14,7 @@ const categorySchema = new Schema(
 
     budget: {type: Number,
              required: true,
+             min: [0, "Must be >= 0!"],
     },
   },
   

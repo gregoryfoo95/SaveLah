@@ -20,14 +20,17 @@ const summary = async (req,res) => {
 
 const create = async (req, res) => {
     const {category_name, budget} = req.body;
-    const categories = await Category.find().exec();  
-    if (category_name === "" || budget === "") {
-        const context = {msg: "Category and Budget fields should not be left empty.", categories}
-        res.render("categories/summary", context);
-        return;
-    }
+    const categories = await Category.find().exec(); 
     try {
-        await cleanUp(req);
+        if (category_name === "" || budget === "") {
+            const context = {msg: "Category and Budget fields should not be left empty.", categories}
+            res.render("categories/summary", context);
+            return;
+        } else if (budget < 0) {
+            const context = {msg: "Budget should not be a negative amount!", categories}
+            res.render("categories/summary", context);
+            return;
+        }
         await Category.create(
             {
                 category_name: req.body.category_name,
@@ -52,7 +55,6 @@ const editForm = async (req,res) => {
 
 const edit = async (req,res) => {
     try {
-        await cleanUp(req);
         const id = req.params.id;
         await Category.findByIdAndUpdate(id, req.body, {new:true}).exec();
         const categories = await Category.find().exec();
@@ -76,12 +78,6 @@ const del = async (req,res) => {
     }
 }
 
-const cleanUp = (data) => {
-    for (let key in data) {
-        if (data[key] === '') delete data[key];
-    }
-    return data;
-}
 
 module.exports = {
     summary,

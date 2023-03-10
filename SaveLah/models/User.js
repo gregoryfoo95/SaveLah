@@ -10,10 +10,18 @@ const userSchema = new Schema(
     },
     password: { type: String,
                 required: true,
+                minlength: 8,
     },
-    monthly_salary: Number,
-    gender: String,
-    dob: Date,
+    monthly_salary: {type: Number,
+                     required: true,
+    },
+    gender: {type: String,
+             required: true,
+    },
+
+    dob: { type: Date,
+           required: true,
+    }
   },
   {
     timestamps: true,

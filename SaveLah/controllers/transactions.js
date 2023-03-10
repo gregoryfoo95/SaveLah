@@ -68,9 +68,22 @@ const edit = async (req,res) => {
     }
 }
 
+const del = async (req,res) => {
+    const id = req.params.id;
+    try {
+        await Transaction.findByIdAndDelete(id).exec();
+        const categories = await Category.find().exec();
+        const context = {msg: `You have deleted a transaction.`}
+        res.render("transactions/summary", context);
+    } catch (err) {
+        res.send(404,"Error deleting transaction")
+    }
+}
+
 module.exports = {
     summary,
     create,
     editForm,
-    edit
+    edit,
+    del
 }
