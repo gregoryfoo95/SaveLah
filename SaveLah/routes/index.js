@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const usersCtrl = require("../controllers/users");
+const dashboardCtrl = require("../controllers/dashboard");
 const User = require("../models/User");
 /* GET home page. */
 
@@ -15,7 +15,7 @@ const isAuth = async (req, res, next) => {
   }
 };
 
-router.get('/', usersCtrl.home);
-router.get('/dashboard', isAuth, usersCtrl.dashboard);
+router.get('/', dashboardCtrl.home);
+router.get('/dashboard', isAuth, dashboardCtrl.dashboard);
 
 module.exports = router;

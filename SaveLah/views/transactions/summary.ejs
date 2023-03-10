@@ -10,7 +10,6 @@
                 <select name="category_id">
                     <%- categories.map(c=> `<option value=${c._id}>${c.category_name}</option>`)%>
                 </select>
-                <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
                 <label>Date: <input type="date" id="date" name="date"> </label>
                 <script>
                     $('#date').val(new Date().toJSON().slice(0, 10));
@@ -23,15 +22,26 @@
         <table id="transactionList">
             <thead>
                 <tr>
-                    <th>Transactions</th>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Amount</th>
                 </tr>
+
             </thead>
             <tbody>
+                <% transactions.forEach((t,i) => { %>
                     <tr>
                         <td>
+                            <%=t.date.toString().slice(0,15) %>
+                        </td>
+                        <td>
+                            <%=t.category_id.category_name%>
+                        </td>
+                        <td>
+                            <%=t.amount%> 
                         </td>
                     </tr>
-
+                <% }) %>
             </tbody>
         </table>
 

@@ -11,9 +11,9 @@ const User = require("../models/User");
 
 const summary = async (req,res) => {
     try {
-        console.log(req.session);
-        const categories = await Category.find({}).exec()
-        const transactions = await Transaction.find({}).exec();
+        const categories = await Category.find().exec();
+        const transactions = await Transaction.find().populate("category_id").exec();
+        console.log(transactions);
         const context = {msg: "",
                         transactions,
                         categories,
@@ -26,15 +26,16 @@ const summary = async (req,res) => {
 
 const create = async (req, res) => {
     try {
-        console.log(req.body);
-        const categories = await Category.find({}).exec()
-        const transactions = await Transaction.create(
+        //console.log(req.body);
+        const categories = await Category.find().exec()
+        await Transaction.create(
             {
                 category_id: req.body.category_id,
                 user_id: req.session.userid,
                 date: req.body.date,
                 amount: req.body.amount,
             });
+        const transactions = await Transaction.find().populate("category_id").exec();
         const msg = `You have added a transaction`;
         res.render("transactions/summary", {msg, transactions, categories});
     } catch (err) {
