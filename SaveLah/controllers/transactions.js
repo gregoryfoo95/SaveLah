@@ -73,7 +73,7 @@ const del = async (req,res) => {
     try {
         await Transaction.findByIdAndDelete(id).exec();
         const categories = await Category.find().exec();
-        const context = {msg: `You have deleted a transaction.`}
+        const context = {msg: `You have deleted a transaction.`, categories}
         res.render("transactions/summary", context);
     } catch (err) {
         res.send(404,"Error deleting transaction")
