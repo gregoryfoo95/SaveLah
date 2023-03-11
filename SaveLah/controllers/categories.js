@@ -58,7 +58,7 @@ const edit = async (req,res) => {
         const id = req.params.id;
         await Category.findByIdAndUpdate(id, req.body, {new:true}).exec();
         const categories = await Category.find().exec();
-        const context = {msg: `You have updated ${req.body.category_name}`, categories}
+        const context = {msg: `You have updated ${req.body.category_name}.`, categories}
         res.render("categories/summary",context)
     } catch (err) {
         res.status(404)
@@ -71,7 +71,7 @@ const del = async (req,res) => {
     try {
         await Category.findByIdAndDelete(id).exec();
         const categories = await Category.find().exec();
-        const context = {msg: `You have deleted ${req.body.category_name}`, categories}
+        const context = {msg: `You have deleted ${req.body.category_name}.`, categories}
         res.render("categories/summary",context);
     } catch (err) {
         res.send(404,"Error deleting category")
