@@ -71,11 +71,18 @@ const edit = async (req,res) => {
 const del = async (req,res) => {
     const id = req.params.id;
     try {
-        await Category.findByIdAndDelete(id).exec();
+        const transaction = await Transaction.find({category_id: id}).exec();
+        if (transaction === null) {
+            await Category.findByIdAndDelete(id).exec();
+            //await Transaction.deleteMany({category_id: id});
+            const categories = await Category.find().exec();
+            const context = {msg: `You have deleted ${req.body.category_name}`, categories}
+            res.render("categories/summary",context);
+    } else {
         const categories = await Category.find().exec();
-        const context = {msg: `You have deleted ${req.body.category_name}`, categories}
+        const context = {msg: `You cannot delete this category as there are existing transactions tagged to it.`, categories}
         res.render("categories/summary",context);
-    } catch (err) {
+    }} catch (err) {
         res.send(404,"Error deleting category")
     }
 }
