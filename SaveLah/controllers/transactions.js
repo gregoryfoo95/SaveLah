@@ -13,6 +13,7 @@ const summary = async (req,res) => {
     try {
         const categories = await Category.find().exec();
         const transactions = await Transaction.find().populate("category_id").exec();
+        console.log(transactions);
         const context = {msg: "",
                         transactions,
                         categories,

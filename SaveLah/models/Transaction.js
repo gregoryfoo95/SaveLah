@@ -13,7 +13,9 @@ const transactionSchema = new Schema(
                required: true,
     },
     date: {type: Date,
-        required:true,},
+           required: true,
+    
+      },
         
     amount: {type: Number,
             required: true,

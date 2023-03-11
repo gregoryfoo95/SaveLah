@@ -1,4 +1,6 @@
 const Category = require("../models/Category");
+const Transaction = require("../models/Transaction");
+
 /**
  *
  * @param {import("express").Request} req
@@ -20,8 +22,8 @@ const summary = async (req,res) => {
 
 const create = async (req, res) => {
     const {category_name, budget} = req.body;
-    const categories = await Category.find().exec(); 
     try {
+        let categories = await Category.find().exec(); 
         if (category_name === "" || budget === "") {
             const context = {msg: "Category and Budget fields should not be left empty.", categories}
             res.render("categories/summary", context);
@@ -37,7 +39,7 @@ const create = async (req, res) => {
                 budget: req.body.budget,
                 user_id: req.session.userid,
             });
-        const categories = await Category.find().exec();    
+        categories = await Category.find().exec();    
         const msg = `You have added ${req.body.category_name}`;    
         res.render("categories/summary", {msg,categories});
     } catch (err) {
@@ -71,7 +73,7 @@ const del = async (req,res) => {
     try {
         await Category.findByIdAndDelete(id).exec();
         const categories = await Category.find().exec();
-        const context = {msg: `You have deleted ${req.body.category_name}.`, categories}
+        const context = {msg: `You have deleted ${req.body.category_name}`, categories}
         res.render("categories/summary",context);
     } catch (err) {
         res.send(404,"Error deleting category")
