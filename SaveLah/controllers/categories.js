@@ -11,12 +11,20 @@ const Transaction = require("../models/Transaction");
 
 const summary = async (req,res) => {
     try {
+        //including search query functionality
+        const pattern = req.query.category_name;
+        const Re = new RegExp(pattern);
+        const categories = await Category.find({category_name: Re}).exec();
+        if (categories.length) {
+            res.render("categories/summary", {msg: "", categories});
+        } else {
         const categories = await Category.find().exec();
         const context = {msg: "",
                         categories};
         res.render("categories/summary", context);
-    } catch(err) {
+    }} catch(err) {
         res.send(404,"Categories cannot be shown")
+        console.log(err);
     }
 }
 

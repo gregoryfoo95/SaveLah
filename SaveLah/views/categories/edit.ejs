@@ -10,11 +10,11 @@
     <fieldset>
         <legend>Edit Form</legend>
     <label>Category:
-        <input type="text" name="category_name" value="<%=category.category_name%>" >
+        <input <input name="category_name" placeholder="WRITE IN CAPS" pattern="[A-Z0-9 ]+" value="<%=category.category_name%>" >
     </label>
     <br>
     <label>Budget:
-        <input type="number" name="budget" value="<%=category.budget%>" >
+        <input name="budget" type="number" placeholder="No negative budget please" step="0.01" min="0" pattern="^\s*$^[+]?([0-9]+(?:[\.][0-9]*)?|\.[0-9]+)$" value="<%=category.budget%>" >
     </label>
     <br>
     <button type="submit">Amend</button>

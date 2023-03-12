@@ -7,10 +7,16 @@
         <form action="/categories" method="POST">
             <fieldset>
                 <legend>Add Category & Budget</legend>
-                <label>Category: <input name="category_name" autocapitalize="words" placeholder="WRITE IN CAPS" pattern="[A-Z0-9 ]+"/></label>
+                <label>Category: <input name="category_name"  placeholder="WRITE IN CAPS" pattern="[A-Z0-9 ]+"/></label>
                 <label>Budget: $<input name="budget" type="number" placeholder="No negative budget please" step="0.01" min="0" pattern="^\s*$^[+]?([0-9]+(?:[\.][0-9]*)?|\.[0-9]+)$"/></label>
                 <input type="submit" />
-            </fieldset>            
+            </fieldset>   
+        </form>
+        <form method="GET">
+            <label>
+                Search for Category: <input name="category_name" type="search" />
+            </label>
+            <button>Search</button>
         </form>
     </nav>
 
