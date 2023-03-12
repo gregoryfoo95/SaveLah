@@ -23,13 +23,18 @@ const summary = async (req,res) => {
 const create = async (req, res) => {
     const {category_name, budget} = req.body;
     try {
-        let categories = await Category.find().exec(); 
+        let categories = await Category.find().exec();
+        const category = await Category.find({category_name: category_name})
         if (category_name === "" || budget === "") {
             const context = {msg: "Category and Budget fields should not be left empty.", categories}
             res.render("categories/summary", context);
             return;
         } else if (budget < 0) {
             const context = {msg: "Budget should not be a negative amount!", categories}
+            res.render("categories/summary", context);
+            return;
+        } else if (category.length) {
+            const context = {msg: "There is an existing category of the same name.", categories}
             res.render("categories/summary", context);
             return;
         }
