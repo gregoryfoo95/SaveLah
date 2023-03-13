@@ -39,7 +39,7 @@ const create = async (req, res) => {
         res.render("transactions/summary", {msg, transactions, categories});
     } catch (err) {
         res.send(404, "Error adding transaction");
-    };
+    }
 }
 
 const editForm = async (req,res) => {
@@ -53,7 +53,7 @@ const editForm = async (req,res) => {
         res.render("transactions/edit", context);
 } catch (err) {
     res.send(404, "Error opening edit form.")
-};
+}
 }
 
 const edit = async (req,res) => {

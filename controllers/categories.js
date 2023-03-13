@@ -12,7 +12,7 @@ const Transaction = require("../models/Transaction");
 const summary = async (req,res) => {
     try {
         //including search query functionality
-        const pattern = req.query.category_name;
+        const pattern = req.query.category_name.toUpperCase();
         const Re = new RegExp(pattern);
         const categories = await Category.find({category_name: Re}).exec();
         if (categories.length) {
@@ -48,7 +48,7 @@ const create = async (req, res) => {
         }
         await Category.create(
             {
-                category_name: req.body.category_name,
+                category_name: req.body.category_name.toUpperCase(),
                 budget: req.body.budget,
                 user_id: req.session.userid,
             });
@@ -57,7 +57,7 @@ const create = async (req, res) => {
         res.render("categories/summary", {msg,categories});
     } catch (err) {
         res.send(404, "Error adding category");
-    };
+    }
 }
 
 
