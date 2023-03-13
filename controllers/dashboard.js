@@ -19,9 +19,7 @@ const dashboard = async (req, res) => {
     const user = await User.findById(user_id);
     const username = user.username;
     const categories = await Category.find().exec()
-    const data = fetchData();
-    //Computation functions
-
+    const data = await getData();
     res.render('index', {
         username,
         categories,
@@ -29,7 +27,7 @@ const dashboard = async (req, res) => {
     });
 };
 
-const getData = async (req,res) => {
+const getData = async () => {
     let transactionArr = [];
     let sum = 0;
     const categories = await Category.find().exec();
@@ -50,18 +48,19 @@ const getData = async (req,res) => {
         transactionObj["delta"] = transactionObj.budget - transactionObj.spent;
         sum = 0;
     })
-    res.send(transactionArr);
+    //console.log(transactionArr);
+    return transactionArr;
 }
 
-const fetchData = async () => {
-    const response = await fetch("../api/data");
+/* const fetchData = async (req,res) => {
+    const response = await fetch("http://localhost:3000/api/data");
     const data = await response.json();
-    console.log(data);
+    res.send(data);
     return data;
-}
+} */
 
 module.exports = {
     home,
     dashboard,
-    getData
+    getData,
 };

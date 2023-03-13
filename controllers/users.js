@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const Category  = require("../models/Category");
+const dashboardCtrl = require("../controllers/dashboard");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
