@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const Category = require("../models/Category");
+
 /**
  *
  * @param {import("express").Request} req
@@ -17,6 +18,7 @@ const dashboard = async (req, res) => {
     const {username} = req.body;
     const user = await User.findOne({ username })
     const categories = await Category.find().exec()
+
     res.render('index', {
         title: "SaveLah!",
         user,

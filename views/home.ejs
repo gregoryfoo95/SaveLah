@@ -1,13 +1,39 @@
 <%- include('./partials/header') %>
 
 <h2>Welcome to SaveLah!</h2>
-<nav>
-    <a href="/user/register/new">Register</a>
-    <a href="/user/login/new">Login</a>
-    <!-- <a href="/auth/google" class="login">LOG IN&nbsp;<img src="https://i.imgur.com/FHjYyi0.png"></a> -->
-</nav>
-
-<p>This is an app developed by Greg for his renovation and wedding expenses.</p>
-
-
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-2 bg-primary bg-gradient d-none d-md-block sidebar">
+            <div class="left-sidebar">
+                <ul class="nav flex-column sidebar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/user/register/new">
+                            <svg class="bi bi-chevron-right" width="16" height="16" viewBox="0 0 20 20"
+                                fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            </svg>
+                            Register
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/user/login/new">
+                            <svg class="bi bi-chevron-right" width="16" height="16" viewBox="0 0 20 20"
+                                fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            </svg>
+                            Login
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-3 col-lg-5 px-4 bg-dark text-white border border-primary">
+            <label>Background:</label><br>
+            This application was developed to assist Greg with his renovation and wedding budget management.
+        </div>
+        <div class="col-md-3 col-lg-5 px-4 bg-dark text-white border border-primary">
+            <label>Developer Profile:</label><br>
+            Hi, my name is Greg. Please refer to this <a href="https://github.com/gregoryfoo95/SaveLah">link</a> for my Github Repository!
+        </div>
+    </div>
+</div>
 <%- include('./partials/footer') %>

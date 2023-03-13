@@ -1,28 +1,32 @@
 <%- include('../partials/header') %>
 
-    <h2>Registration Form</h2>
-    <%=msg%>
-    <form action="/user/register" method="post">
-        <fieldset>
-            <legend>Registration</legend>
-            <label>Username: <input name="username"/></label>
-            <br />
-            <label>Password: <input type="password" name="password" minlength="8"  /></label>
-            <br />
-            <label>Confirm Password: <input type="password" name="password2" minlength="8" /></label>
-            <br />
-            <label>Monthly Salary ($/mth): <input name="monthly_salary" placeholder="No negative amount please" step="0.01" min="0" pattern="^\s*$^[+]?([0-9]+(?:[\.][0-9]*)?|\.[0-9]+)$" /></label>
-            <br />
-            <label>Gender:</label>
-            <select name="gender">
-                <option value="M">M</option>
-                <option value="F">F</option>
-                <option value="NA">NA</option>
-            </select>
-            <br />
-            <label>Date of Birth: <input type="date" name="dob"/></label>
-            <br />
-            <button>Register</button>
-        </fieldset>
-    </form>
+<div class="container-fluid">
+    <main role="main" class="col-md-5 col-lg-5 px-4 bg-dark text-white">
+        <h2>Registration Form</h2>
+        <%=msg%>
+        <form action="/user/register" method="post">
+            <fieldset>
+                <legend>Registration</legend>
+                <label>Username: <input name="username"/></label>
+                <br />
+                <label>Password: <input type="password" name="password" minlength="8"  /></label>
+                <br />
+                <label>Confirm Password: <input type="password" name="password2" minlength="8" /></label>
+                <br />
+                <label>Monthly Salary ($/mth): <input name="monthly_salary" placeholder="No negative amount please" step="0.01" min="0" pattern="^\s*$^[+]?([0-9]+(?:[\.][0-9]*)?|\.[0-9]+)$" /></label>
+                <br />
+                <label>Gender:</label>
+                <select name="gender">
+                    <option value="M">M</option>
+                    <option value="F">F</option>
+                    <option value="NA">NA</option>
+                </select>
+                <br />
+                <label>Date of Birth: <input type="date" name="dob"/></label>
+                <br />
+                <button>Register</button>
+            </fieldset>
+        </form>
+    </main>
+</div>
 <%- include('../partials/footer') %>

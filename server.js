@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const methodOverride = require('method-override');
 const session = require('express-session');
+const connectMongo = require('connect-mongo');
 /* const passport = require('passport'); */
 
 require("dotenv").config();
@@ -25,6 +26,8 @@ app.set("trust proxy", 1); // trust first proxy
 
 app.use(
   session({
+    store: connectMongo.create({ mongoUrl: process.env.DATABASE_URL }),
+    cookie: {maxAge: 24 * 60 * 60 * 1000}, //24 hours
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
