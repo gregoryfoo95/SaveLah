@@ -27,7 +27,7 @@ app.set("trust proxy", 1); // trust first proxy
 app.use(
   session({
     store: connectMongo.create({ mongoUrl: process.env.DATABASE_URL }),
-    cookie: {maxAge: 24 * 60 * 60 * 1000}, //24 hours
+    cookie: {maxAge: 60 * 60 * 1000}, //1 hour
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
