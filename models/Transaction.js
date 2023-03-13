@@ -11,7 +11,7 @@ const transactionSchema = new Schema(
     user_id: { type: Schema.Types.ObjectId,
                ref: "User",
                required: true,
-    },
+    }, //potentially create inconsistencies 
     date: {type: Date,
            required: true,
     

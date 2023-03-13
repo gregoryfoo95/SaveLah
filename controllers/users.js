@@ -54,11 +54,11 @@ const login = async (req,res) => {
     }
     bcrypt.compare(password, user.password, (err, result) => {
         if (result) {
-        req.session.userid = user._id;
-        res.redirect("/dashboard");
+            req.session.userid = user._id;
+            res.redirect("/dashboard");
         } else {
-        const context = { msg: "Password is wrong" };
-        res.render("users/login", context);
+            const context = { msg: "Password is wrong" };
+            res.render("users/login", context);
         }
     });
     } catch(err) {
@@ -66,10 +66,23 @@ const login = async (req,res) => {
     }
 }
 
+const logout = async (req,res) => {
+    try {
+        if (req.session) {
+            req.session.destroy();
+            const context = {msg: "You have been logged out."};
+            res.render("home", context);
+        }
+    } catch(err) {
+        console.log(err);
+        res.send(404, "Error with logout");
+    }
+}
 
 module.exports = {
     loginPage,
     registerPage,
     register,
     login,
+    logout
 };

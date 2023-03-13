@@ -11,6 +11,7 @@ const Category = require("../models/Category");
 const home = async (req, res) => {
     res.render('home', {
         title: "SaveLah!",
+        msg: "",
     });
 };
 
@@ -22,6 +23,7 @@ const dashboard = async (req, res) => {
         title: "SaveLah!",
         user,
         categories,
+        msg: "",
     });
 };
 
