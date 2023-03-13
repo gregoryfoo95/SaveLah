@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Category  = require("../models/Category");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
@@ -52,10 +53,11 @@ const login = async (req,res) => {
         res.render("users/login", context);
         return;
     }
-    bcrypt.compare(password, user.password, (err, result) => {
+    bcrypt.compare(password, user.password, async (err, result) => {
         if (result) {
             req.session.userid = user._id;
-            res.redirect("/dashboard");
+            const categories = await Category.find().exec();
+            res.render("index", {username,categories});
         } else {
             const context = { msg: "Password is wrong" };
             res.render("users/login", context);

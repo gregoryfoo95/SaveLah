@@ -35,8 +35,7 @@ router.get('/logout', function(req, res){
 const isAuth = async (req, res, next) => {
   if (req.session.userid) {
     const user = await User.findById(req.session.userid).exec();
-    //res.locals.user = user;
-    console.log(res.locals.user);
+    res.locals.user = user;
     next();
   } else {
     res.render("users/login", {msg: "You have no authorisation rights, please try again."});

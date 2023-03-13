@@ -1,11 +1,11 @@
 <%- include('./partials/header') %>
 
-<h2>SaveLah! Dashboard</h2>
+
 
 <div class="container-fluid">
   <div class="row">
     <!-- Sidebar -->
-    <div class="col-md-2 bg-light d-none d-md-block sidebar">
+    <div class="col-md-1 bg-light d-none d-md-block sidebar">
       <div class="left-sidebar">
         <ul class="nav flex-column sidebar-nav">
           <li class="nav-item">
@@ -28,6 +28,7 @@
       </div>
     </div>
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+      <h3><%= `Welcome ${username}!`%></h3>
       <h3>Overview of Categories</h3>
       <hr>
       <div class="table-responsive">

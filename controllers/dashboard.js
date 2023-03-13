@@ -1,6 +1,6 @@
 const User = require("../models/User");
 const Category = require("../models/Category");
-
+const Transaction = require("../models/Transaction");
 /**
  *
  * @param {import("express").Request} req
@@ -10,24 +10,31 @@ const Category = require("../models/Category");
 
 const home = async (req, res) => {
     res.render('home', {
-        title: "SaveLah!",
-        msg: "",
+        msg: ""
     });
 };
 
 const dashboard = async (req, res) => {
-    const {username} = req.body;
-    const user = await User.findOne({ username })
+    const user_id = req.session.userid;
+    const user = await User.findById(user_id);
+    const username = user.username;
     const categories = await Category.find().exec()
+    //Computation functions
+
     res.render('index', {
-        title: "SaveLah!",
-        user,
+        username,
         categories,
-        msg: "",
     });
 };
 
+const calculator = async () => {
+    //let budgetObj = {};
+    const transactions = await Transaction.find().populate("category_id").exec();
+    console.log(transactions);
+}
+
 module.exports = {
     home,
-    dashboard
+    dashboard,
+    calculator
 };
