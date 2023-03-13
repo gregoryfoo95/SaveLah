@@ -1,56 +1,87 @@
 <%- include('../partials/header') %>
 
-    <h2>All Categories</h2>
-    <a href="/dashboard">Dashboard</a>
-    <%=msg%>
-    <nav>
-        <form action="/categories" method="POST">
-            <fieldset>
-                <legend>Add Category & Budget</legend>
-                <label>Category: <input name="category_name"  placeholder="Category" pattern="[A-Za-z0-9 ]+"/></label>
-                <label>Budget: $<input name="budget" type="number" placeholder="No negative budget please" step="0.01" min="0" pattern="^\s*$^[+]?([0-9]+(?:[\.][0-9]*)?|\.[0-9]+)$"/></label>
-                <input type="submit" />
-            </fieldset>   
-        </form>
-        <form method="GET">
-            <label>
-                Search for Category: <input placeholder="Category" name="category_name" type="search" />
-            </label>
-            <button>Search</button>
-        </form>
-    </nav>
+<div class="container-fluid">
+    <h2>SaveLah!</h2>
 
-    <table id="categoryList">
-        <thead>
-            <tr>
-                <th>Category Name</th>
-                <th>Budget ($)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% categories.forEach((c,i) => { %>
-                <tr>
-                    <td>
-                        <%=c.category_name%>
-                    </td>
-                    <td>
-                        <%=c.budget%>
-                    </td>
-                    <td>
-                        <form action="/categories/<%=c._id%>/edit" method="get">
-                            <button type="submit">Edit</button>
-                        </form>
-                    </td>
-
-                    <td>
-                        <form action="/categories/<%=c._id%>/?_method=DELETE" method="post">
-                            <button type="submit">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-
-            <%}) %>
-        </tbody>
-    </table>
-
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-2 bg-primary bg-gradient d-none d-md-block sidebar">
+            <div class="left-sidebar">
+                <ul class="nav flex-column sidebar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/categories/all">
+                            <svg class="bi bi-chevron-right" width="16" height="16" viewBox="0 0 20 20"
+                                fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            </svg>
+                            Categories
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/transactions/all">
+                            <svg class="bi bi-chevron-right" width="16" height="16" viewBox="0 0 20 20"
+                                fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            </svg>
+                            Transactions
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <div class="row bg-dark text-white" >
+                <%=msg%>
+            </div>
+            <div class="row bg-dark text-white">
+                <form action="/categories" method="POST">
+                    <fieldset>
+                        <legend>Add Category & Budget</legend>
+                        <label>Category: <input name="category_name" placeholder="Category" pattern="[A-Za-z0-9 ]+" /></label>
+                        <label>Budget: $<input name="budget" type="number" placeholder="No negative budget please" step="0.01"
+                                min="0" pattern="^\s*$^[+]?([0-9]+(?:[\.][0-9]*)?|\.[0-9]+)$" /></label>
+                        <input type="submit" />
+                    </fieldset>
+                </form>
+            </div>
+            <div class="row bg-dark text-white">
+                <form method="GET">
+                    <label>
+                        Search for Category: <input placeholder="Category" name="category_name" type="search" />
+                    </label>
+                    <button>Search</button>
+                </form>
+            </div>
+            <div class="row bg-dark text-white">
+            <h3>Overview of Categories</h3>
+            <hr>
+            <div class="table-responsive">
+                <table class="table table-dark">
+                    <thead>
+                        <tr>
+                            <th scope="col">Categories</th>
+                            <th scope="col">Budget</th>
+                            <th scope="col" colspan="2">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% categories.forEach((c,i)=> { %>
+                        <tr>
+                            <td><%=c.category_name%></td>
+                            <td><%=c.budget%></td>
+                            <td>
+                                <form action="/categories/<%=c._id%>/edit" method="get">
+                                    <button type="submit">Edit</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form action="/categories/<%=c._id%>/?_method=DELETE" method="post">
+                                    <button type="submit">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <%}) %>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
 <%- include('../partials/footer') %>
