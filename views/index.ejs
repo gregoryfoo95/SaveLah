@@ -2,29 +2,7 @@
 
 <div class="container-fluid">
   <div class="row">
-    <!-- Sidebar -->
-    <div class="col-md-1 bg-light d-none d-md-block sidebar">
-      <div class="left-sidebar">
-        <ul class="nav flex-column sidebar-nav">
-          <li class="nav-item">
-            <a class="nav-link active" href="/categories/all">
-              <svg class="bi bi-chevron-right" width="16" height="16" viewBox="0 0 20 20" fill="currentColor"
-                xmlns="http://www.w3.org/2000/svg">
-              </svg>
-              Categories
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/transactions/all">
-              <svg class="bi bi-chevron-right" width="16" height="16" viewBox="0 0 20 20" fill="currentColor"
-                xmlns="http://www.w3.org/2000/svg">
-              </svg>
-              Transactions
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
+    <%- include('./partials/sidebar') %>
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
       <h3><%= `Welcome ${username}!`%></h3>
       <h3>Overview of Categories</h3>

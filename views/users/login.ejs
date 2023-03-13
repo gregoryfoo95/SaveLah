@@ -1,6 +1,7 @@
 <%- include('../partials/header') %>
 
-    <h2>Login Form</h2>
+<div class="container-fluid">
+    <main role="main" class="col-md-5 col-lg-5 px-4 bg-dark text-white">
     <%=msg%>
         <form action="/user/login" method="post">
             <fieldset>
@@ -9,7 +10,14 @@
                 <br />
                 <label>Password: <input type="password" name="password" /></label>
                 <input type="hidden" value="secret"/>
+                <br />
                 <button class="userBtn">Login</button>
             </fieldset>
         </form>
+        <h5>Or register if you have not...</h5>
+        <form action="/user/register/new" method="GET">
+            <button class="userBtn">Register</button>
+        </form>
+    </main>
+</div>
 <%- include('../partials/footer') %>

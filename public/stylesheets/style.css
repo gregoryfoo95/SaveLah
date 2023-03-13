@@ -100,3 +100,8 @@ input::placeholder {
   padding-right: 10px;
 }
 
+.row {
+  padding-left: 20px;
+  padding-top: 5px;
+  padding-bottom: 10px;
+}
