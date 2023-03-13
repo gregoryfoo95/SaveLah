@@ -1,58 +1,98 @@
 <%- include('../partials/header') %>
-
-
-    <h2>All Transactions</h2>
-    <a href="/dashboard">Dashboard</a>
-    <%=msg%>
-        <nav>
-            <form action="/transactions" method="POST">
-                <label>Category:</label>
-                <select name="category_id">
-                    <%- categories.map(c=> `<option value=${c._id}>${c.category_name}</option>`)%>
-                </select>
-                <label>Date: <input type="date" id="date" name="date"> </label>
-                <script>
-                    $('#date').val(new Date().toJSON().slice(0, 10));
-                </script>
-                <label>Amount: $<input name="amount" type="number" placeholder="No negative amount please" step="0.01" min="0" pattern="^\s*$^[+]?([0-9]+(?:[\.][0-9]*)?|\.[0-9]+)$"  /></label>
-                <input type="submit" />
-            </form>
-        </nav>
-
-        <table id="transactionList">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Category</th>
-                    <th>Amount</th>
-                </tr>
-
-            </thead>
-            <tbody>
-                <% transactions.forEach((t,i) => { %>
-                    <tr>
-                        <td>
-                            <%=t.date.toString().slice(0,15) %>
-                        </td>
-                        <td>
-                            <%=t.category_id.category_name%>
-                        </td>
-                        <td>
-                            <%=t.amount%> 
-                        </td>
-                        <td>
-                            <form action="/transactions/<%=t._id%>/edit" method="get">
-                                <button type="submit">Edit</button>
-                            </form>
-                        </td>
-                        <td>
-                            <form action="/transactions/<%=t._id%>/?_method=DELETE" method="post">
-                                <button type="submit">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                <% }) %>
-            </tbody>
-        </table>
-
-        <%- include('../partials/footer') %>
+<div class="container-fluid">
+<h2>All Transactions</h2>
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-2 bg-primary bg-gradient d-none d-md-block sidebar">
+            <div class="left-sidebar">
+                <ul class="nav flex-column sidebar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/categories/all">
+                            <svg class="bi bi-chevron-right" width="16" height="16" viewBox="0 0 20 20" fill="currentColor"
+                                xmlns="http://www.w3.org/2000/svg">
+                            </svg>
+                            Categories
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/transactions/all">
+                            <svg class="bi bi-chevron-right" width="16" height="16" viewBox="0 0 20 20" fill="currentColor"
+                                xmlns="http://www.w3.org/2000/svg">
+                            </svg>
+                            Transactions
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <div class="row bg-dark text-white">
+                <%=msg%>
+            </div>
+            <div class="row bg-dark text-white">
+                <form action="/transactions" method="POST">
+                    <label>Category:</label>
+                    <select name="category_id">
+                        <%- categories.map(c=> `<option value=${c._id}>${c.category_name}</option>`)%>
+                    </select>
+                    <label>Date: <input type="date" id="date" name="date"> </label>
+                    <script>
+                        $('#date').val(new Date().toJSON().slice(0, 10));
+                    </script>
+                    <label>Amount: $<input name="amount" type="number" placeholder="No negative amount please" step="0.01" min="0"
+                            pattern="^\s*$^[+]?([0-9]+(?:[\.][0-9]*)?|\.[0-9]+)$" /></label>
+                    <input type="submit" />
+                </form>
+            </div>
+            <div class="row bg-dark text-white">
+                <form method="GET">
+                    <label>
+                        Search for Category: <input placeholder="Category" name="category_name" type="search" />
+                    </label>
+                    <button>Search</button>
+                </form>
+            </div>
+            <div class="row bg-dark text-white">
+                <h3>Overview of Categories</h3>
+                <hr>
+                <div class="table-responsive">
+                    <table class="table table-dark">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                            </tr>
+                        
+                        </thead>
+                        <tbody>
+                            <% transactions.forEach((t,i)=> { %>
+                                <tr>
+                                    <td>
+                                        <%=t.date.toString().slice(0,15) %>
+                                    </td>
+                                    <td>
+                                        <%=t.category_id.category_name%>
+                                    </td>
+                                    <td>
+                                        <%=t.amount%>
+                                    </td>
+                                    <td>
+                                        <form action="/transactions/<%=t._id%>/edit" method="get">
+                                            <button type="submit">Edit</button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <form action="/transactions/<%=t._id%>/?_method=DELETE" method="post">
+                                            <button type="submit">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+        </main>
+    </div>
+</div>
+<%- include('../partials/footer') %>
