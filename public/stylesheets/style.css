@@ -13,3 +13,90 @@
 .container-fluid {
   padding-top:50px;
 }
+
+.editBtn {
+    background-color: #008CBA;
+      border: none;
+      color: white;
+      padding: 10px 10px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 13px;
+      border-radius: 10px;
+}
+
+.delBtn {
+  background-color: #f44336;
+  border: none;
+  color: white;
+  padding: 10px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 13px;
+  border-radius: 10px;
+}
+
+.submitBtn {
+    background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 10px 10px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 13px;
+      border-radius: 10px;
+}
+
+.searchBtn {
+  background-color: #5f9ea0;
+  border: none;
+  color: white;
+  padding: 10px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 13px;
+  border-radius: 10px;
+}
+
+.logoutBtn {
+  background-color: gray;
+  border: none;
+  color: white;
+  padding: 7px 7px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 13px;
+  border-radius: 10px;
+}
+
+.userBtn {
+  background-color: #008CBA;
+  border: none;
+  color: white;
+  padding: 10px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 13px;
+  border-radius: 10px;
+}
+
+input {
+  border-radius: 8px;
+}
+
+input::placeholder {
+  font: 12px sans-serif;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.container-fluid {
+  padding-right: 10px;
+}
+

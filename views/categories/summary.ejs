@@ -36,7 +36,7 @@
                         <label>Category: <input name="category_name" placeholder="Category" pattern="[A-Za-z0-9 ]+" /></label>
                         <label>Budget: $<input name="budget" type="number" placeholder="No negative budget please" step="0.01"
                                 min="0" pattern="^\s*$^[+]?([0-9]+(?:[\.][0-9]*)?|\.[0-9]+)$" /></label>
-                        <input type="submit" />
+                        <input class="submitBtn" type="submit" />
                     </fieldset>
                 </form>
             </div>
@@ -45,7 +45,7 @@
                     <label>
                         Search for Category: <input placeholder="Case-insensitive" name="category_name" type="search" />
                     </label>
-                    <button>Search</button>
+                    <button class="searchBtn" >Search</button>
                 </form>
             </div>
             <div class="row bg-dark text-white">
@@ -67,12 +67,12 @@
                             <td><%=c.budget%></td>
                             <td>
                                 <form action="/categories/<%=c._id%>/edit" method="get">
-                                    <button type="submit">Edit</button>
+                                    <button class="editBtn" type="submit">Edit</button>
                                 </form>
                             </td>
                             <td>
                                 <form action="/categories/<%=c._id%>/?_method=DELETE" method="post">
-                                    <button type="submit">Delete</button>
+                                    <button class="delBtn" type="submit">Delete</button>
                                 </form>
                             </td>
                         </tr>
