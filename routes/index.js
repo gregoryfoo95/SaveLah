@@ -44,5 +44,5 @@ const isAuth = async (req, res, next) => {
 
 router.get('/', dashboardCtrl.home);
 router.get('/dashboard', isAuth, dashboardCtrl.dashboard);
-
+router.get('/api/data', dashboardCtrl.getData);
 module.exports = router;
