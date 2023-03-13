@@ -64,7 +64,8 @@ const create = async (req, res) => {
 const editForm = async (req,res) => {
     const id = req.params.id;
     const category = await Category.findById(id).exec();
-    const context = {msg: "", category};
+    const categories = await Category.find().exec();
+    const context = {msg: "", category, categories};
     res.render("categories/edit", context);
 }
 
