@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const usersCtrl = require("../controllers/users");
-const User = require("../models/User");
+
 
 
 router.get("/login/new", usersCtrl.loginPage);
