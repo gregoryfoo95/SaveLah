@@ -15,7 +15,7 @@
                             <input type="date" id="date" name="date" />
                         </label>
                         <script>
-                            $("#date").val(new Date(transaction.date).toJSON().slice(0, 10));
+                             document.getElementById("date").value = "<%= new Date(transaction.date).toJSON().slice(0,10) %>";
                         </script>
                         <br>
                         <label>Category:
