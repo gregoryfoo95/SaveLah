@@ -29,3 +29,17 @@ main {
     padding-top: 0px;
 }
 
+#catVsBudget {
+    background-color: whitesmoke;
+    opacity: 0.9;
+}
+
+#catVsSpent {
+    background-color: whitesmoke;
+    opacity: 0.9;
+}
+
+#deltaPie {
+    background-color: whitesmoke;
+    opacity: 0.9;
+}

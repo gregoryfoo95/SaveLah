@@ -5,7 +5,7 @@
     <%- include('./partials/sidebar') %>
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
       <h3><%= `Welcome ${username}!`%></h3>
-      <h3>Overview of Categories</h3>
+      <h3>Dashboard</h3>
       <hr>
       <div class="table-responsive">
         <table class="table table-dark">
@@ -37,38 +37,49 @@
           </tbody>
         </table>
       </div>
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="pb-5">
+            <div class="card custom_card">
+              <canvas id="catVsBudget" data-categories="<%= JSON.stringify(catArr) %>" data-budgets="<%= JSON.stringify(budgetArr) %>"></canvas>
+            </div>
+          </div>
+        </div>
+      
+        <div class="col-lg-6">
+          <div class="pb-5">
+            <div class="card custom_card">
+              <canvas id="catVsSpent" data-categories="<%= JSON.stringify(catArr) %>"
+                data-spent="<%= JSON.stringify(spentArr) %>"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="pb-5">
+            <div class="card custom_card">
+              <canvas id="deltaPie" data-categories="<%= JSON.stringify(catArr) %>"
+                data-delta="<%= JSON.stringify(deltaArr) %>"></canvas>
+            </div>
+          </div>
+        </div>
+      
+        <div class="col-lg-6">
+          <div class="pb-5">
+            <div class="card custom_card">
+              <canvas id="overview" data-categories="<%= JSON.stringify(catArr) %>"
+                data-spent="<%= JSON.stringify(spentArr) %>" data-budget="<%= JSON.stringify(budgetArr) %>"
+                data-delta="<%= JSON.stringify(deltaArr) %>"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 </div>
 
-<script>
-  var echarts = require('echarts');
-
-  var chartDom = document.getElementById('main');
-  var myChart = echarts.init(chartDom, 'dark');
-  var option;
-
-  option = {
-    xAxis: {
-      type: 'category',
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    },
-    yAxis: {
-      type: 'value'
-    },
-    series: [
-      {
-        data: [120, 200, 150, 80, 70, 110, 130],
-        type: 'bar',
-        showBackground: true,
-        backgroundStyle: {
-          color: 'rgba(180, 180, 180, 0.2)'
-        }
-      }
-    ]
-  };
-
-  option && myChart.setOption(option);
-</script>
+<%- include('../public/javascripts/charts') %>
 
 <%- include('./partials/footer') %>

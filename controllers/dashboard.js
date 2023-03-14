@@ -19,16 +19,24 @@ const dashboard = async (req, res) => {
     const user = await User.findById(user_id);
     const username = user.username;
     const categories = await Category.find().exec()
-    const data = await getData();
+    const [data,catArr,budgetArr,spentArr,deltaArr] = await getData();
     res.render('index', {
-        username,
-        categories,
-        data
+        username: username,
+        categories: categories,
+        data: data,
+        catArr: catArr,
+        budgetArr: budgetArr,
+        spentArr: spentArr,
+        deltaArr: deltaArr,
     });
 };
 
 const getData = async () => {
     let transactionArr = [];
+    let catArr = [];
+    let budgetArr = [];
+    let spentArr = [];
+    let deltaArr=[];
     let sum = 0;
     const categories = await Category.find().exec();
     const transactions = await Transaction.find().populate("category_id").exec();
@@ -46,18 +54,15 @@ const getData = async () => {
     })
         transactionObj["spent"] = sum;
         transactionObj["delta"] = transactionObj.budget - transactionObj.spent;
+        catArr.push(transactionObj.category_name);
+        budgetArr.push(transactionObj.budget);
+        spentArr.push(transactionObj.spent);
+        deltaArr.push(transactionObj.delta);
         sum = 0;
     })
-    //console.log(transactionArr);
-    return transactionArr;
+    return [transactionArr,catArr,budgetArr,spentArr,deltaArr];
 }
 
-/* const fetchData = async (req,res) => {
-    const response = await fetch("http://localhost:3000/api/data");
-    const data = await response.json();
-    res.send(data);
-    return data;
-} */
 
 module.exports = {
     home,

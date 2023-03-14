@@ -58,7 +58,8 @@ const login = async (req,res) => {
         if (result) {
             req.session.userid = user._id;
             const categories = await Category.find().exec();
-            res.render("index", {username,categories});
+            const [data,catArr,budgetArr,spentArr,deltaArr] = await dashboardCtrl.getData();
+            res.render("index", {username,categories,data,catArr,budgetArr,spentArr,deltaArr});
         } else {
             const context = { msg: "Password is wrong" };
             res.render("users/login", context);

@@ -1,0 +1,208 @@
+<script>
+  function getRandomColor() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+</script>
+
+<script>
+  const catVsBudget = document.getElementById("catVsBudget").getContext("2d");
+  const catArr = JSON.parse(catVsBudget.canvas.getAttribute("data-categories"));
+  const budgetArr = JSON.parse(catVsBudget.canvas.getAttribute("data-budgets"));
+
+  const labelColors = [];
+  catArr.forEach((cat) => {
+    labelColors.push(getRandomColor());
+  })
+
+  const configcatVsBudget = {
+    type: "bar",
+    data: {
+      labels: catArr,
+      datasets: [{label: "Budget ($)",
+                  data: budgetArr,
+                  backgroundColor: labelColors,
+                  borderColor: 'azure',
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Budget Allocation',
+          font: {
+            size: 20,
+            family: 'Century Gothic',
+          }
+        }
+      },
+      tooltips: { enabled: true },
+      hover: { mode: null },
+      scales: {
+        yAxes: [{
+          title: "Amount ($)",
+          ticks: {
+            beginAtZero: true,
+            stepSize: 5000,
+          }
+        }]
+      }
+    }
+  };
+
+  let chartcatVsBudget = new Chart(catVsBudget, configcatVsBudget);
+
+</script>
+
+<script>
+  const catVsSpent = document.getElementById("catVsSpent").getContext("2d");
+  const catArr1 = JSON.parse(catVsSpent.canvas.getAttribute("data-categories"));
+  const spentArr = JSON.parse(catVsSpent.canvas.getAttribute("data-spent"));
+
+  const configcatVsSpent = {
+    type: "bar",
+    data: {
+      labels: catArr1,
+      datasets: [{label: "Expenditure ($)", 
+                  data: spentArr,
+                  backgroundColor: labelColors,
+                  borderColor: 'azure',
+                  borderWidth: 1
+                }]
+    },
+    options: {
+      plugins: {
+        title: {
+          display: true,
+          text: 'Expenditure on Categories',
+          font: {
+            size: 20,
+            family: 'Century Gothic',
+          }
+        }
+      },
+      tooltips: { enabled: false },
+      hover: { mode: null },
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true,
+            stepSize: 50,
+          }
+        }]
+      }
+    }
+  };
+
+  let chartcatVsSpent = new Chart(catVsSpent, configcatVsSpent);
+
+</script>
+
+
+<script>
+  const deltaPie = document.getElementById("deltaPie").getContext("2d");
+  const catArr2 = JSON.parse(deltaPie.canvas.getAttribute("data-categories"));
+  const deltaArr = JSON.parse(deltaPie.canvas.getAttribute("data-delta"));
+
+  const configdeltaPie = {
+    type: "doughnut",
+    data: {
+      labels: catArr,
+      datasets: [{
+        label: "Remaining budget ($)",
+        data: deltaArr,
+        backgroundColor: labelColors,
+        borderColor: 'azure',
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "bottom"
+        },
+        title: {
+          display: true,
+          text: 'Remaining allocation for categories',
+          font: {
+            size: 20,
+            family: 'Century Gothic',
+          }
+        }
+      },
+      tooltips: { enabled: false },
+      hover: { mode: null },
+    }
+  };
+
+  let chartdeltaPie = new Chart(deltaPie, configdeltaPie);
+
+</script>
+
+<script>
+  const overview = document.getElementById("overview").getContext("2d");
+  const catArr3 = JSON.parse(overview.canvas.getAttribute("data-categories"));
+  const deltaArr3 = JSON.parse(overview.canvas.getAttribute("data-delta"));
+  const budgetArr3 = JSON.parse(overview.canvas.getAttribute("data-budget"));
+  const spentArr3 = JSON.parse(overview.canvas.getAttribute("data-spent"));
+
+  const typeColors = Array.from({length:3}, () => []); 
+  for (let i=0;i<typeColors.length;i++) {
+    const catColors = Array(catArr3.length);
+    catColors.fill(getRandomColor());
+    typeColors[i] = catColors;
+  }
+
+  const configoverview = {
+    type: "bar",
+    data: {
+      labels: catArr3,
+      datasets: [{
+        label: "Budget ($)",
+        data: budgetArr3,
+        backgroundColor: labelColors,
+        borderColor: typeColors[0],
+        borderWidth: 3,
+      },
+      {
+        label: "Spent ($)",
+        data: spentArr3,
+        backgroundColor: labelColors,
+        borderColor: 'azure',
+        borderColor: typeColors[1],
+        borderWidth: 3,
+      },
+      {
+        label: "Delta ($)",
+        data: deltaArr3,
+        backgroundColor: labelColors,
+        borderColor: 'azure',
+        borderColor: typeColors[2],
+        borderWidth: 3,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Overall Finances for all Categories',
+          font: {
+            size: 20,
+            family: 'Century Gothic',
+          }
+        }
+      },
+      tooltips: { enabled: false },
+      hover: { mode: null },
+    }
+  };
+
+  let chartoverview = new Chart(overview, configoverview);
+
+</script>
