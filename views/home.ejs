@@ -2,10 +2,9 @@
 
 
 <div class="container-fluid">
-    <h3>Your handy-dandy budget management app</h3>
     <div class="row">
         <!-- Sidebar -->
-        <div class="col-md-auto bg-light d-none d-md-block sidebar ">
+        <div class="col-md-auto bg-light d-none d-md-block sidebar">
             <div class="left-sidebar">
                 <ul class="nav flex-column sidebar-nav">
                     <li class="nav-item">
@@ -20,18 +19,42 @@
                         </a>
                     </li>
                 </ul>
+                <%=msg%>
             </div>
-            <%=msg%>
         </div>
         
-        <div class="col-md-3 col-lg-5 px-4 bg-dark text-white border border-primary">
-            <label>Background:</label><br>
-            This application was developed to assist Greg with his renovation and wedding budget management.
+        <div class="row">
+            <div class="col-lg-6 col-md-auto">
+                <div class="pb-5">
+                    <div class="card bg-dark text-white">
+                        <label>Background:</label><br>
+                        This application was developed to assist Greg with his renovation and wedding budget management.
+                    </div>
+                </div>
+            </div>
+        
+            <div class="col-lg-6 col-md-auto">
+                <div class="pb-5">
+                    <div class="card bg-dark text-white">
+                        <label>Developer Profile:</label><br>
+                        Hi, my name is Greg. Please refer to this <a href="https://github.com/gregoryfoo95/SaveLah">link</a> for my Github
+                        Repository!
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-3 col-lg-5 px-4 bg-dark text-white border border-primary">
-            <label>Developer Profile:</label><br>
-            Hi, my name is Greg. Please refer to this <a href="https://github.com/gregoryfoo95/SaveLah">link</a> for my Github Repository!
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="pb-5">
+                    <div class="card bg-dark text-white">
+                        <label>*My Humble Abode*</label>
+                        <img src="https://i.ibb.co/mvHXnws/Home.png">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
 <%- include('./partials/footer') %>

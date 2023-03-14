@@ -53,13 +53,12 @@ const create = async (req, res) => {
                 user_id: req.session.userid,
             });
         categories = await Category.find().exec();    
-        const msg = `You have added ${req.body.category_name}`;    
+        const msg = `You have added ${req.body.category_name}.`;    
         res.render("categories/summary", {msg,categories});
     } catch (err) {
         res.send(404, "Error adding category");
     }
 }
-
 
 const editForm = async (req,res) => {
     const id = req.params.id;

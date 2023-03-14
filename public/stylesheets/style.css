@@ -16,6 +16,9 @@
   text-align:left;
 }
 
+.navbar {
+  background-color: black;
+}
 .warning {
   color: red;
 }
