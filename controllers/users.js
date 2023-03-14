@@ -33,6 +33,7 @@ const register = async (req,res) => {
                 monthly_salary: req.body.monthly_salary,
                 gender: req.body.gender,
                 dob: req.body.dob,
+                user_permission:req.body.user_permission
                 });
             res.redirect("/user/login/new");
         });
@@ -49,25 +50,27 @@ const login = async (req,res) => {
     const {username,password} = req.body;
     const user = await User.findOne({ username })
     try {
-    if (user===null) {
-        const context = {msg: "No user was found"}
-        res.render("users/login", context);
-        return;
-    }
-    bcrypt.compare(password, user.password, async (err, result) => {
-        if (result) {
-            req.session.userid = user._id;
-            const categories = await Category.find().exec();
-            const [data,catArr,budgetArr,spentArr,deltaArr] = await dashboardCtrl.getData();
-            res.render("index", {username,categories,data,catArr,budgetArr,spentArr,deltaArr});
-        } else {
-            const context = { msg: "Password is wrong" };
+        if (user===null) {
+            const context = {msg: "No user was found"}
             res.render("users/login", context);
+            return;
         }
-    });
-    } catch(err) {
-        res.send(404, "Error with login");
-    }
+        bcrypt.compare(password, user.password, async (err, result) => {
+            if (result) {
+                req.session.userid = user._id;
+                req.session.user_permission = user.user_permission;
+                const user_permission = user.user_permission;
+                const categories = await Category.find().exec();
+                const [data,catArr,budgetArr,spentArr,deltaArr] = await dashboardCtrl.getData();
+                res.render("index", {username,user_permission,categories,data,catArr,budgetArr,spentArr,deltaArr,msg:""});
+            } else {
+                const context = { msg: "Password is wrong" };
+                res.render("users/login", context);
+            }
+        });
+        } catch(err) {
+            res.send(404, "Error with login");
+        }
 }
 
 const logout = async (req,res) => {
@@ -89,7 +92,9 @@ const isAuth = async (req, res, next) => {
     res.locals.user = user;
     next();
   } else {
-    res.render("users/login", {msg: "You do not have authorisation to access this page."});
+    res.render("users/login", {
+        msg: "You do not have authorisation to access this page.",
+    });
   }
 };
 
@@ -97,8 +102,12 @@ const isAdmin = async (req,res,next) => {
     if (req.session.user_permission === "Admin") { //remember to add into other codes
         return next();
     } else {
+        const user = await User.findById(req.session.userid).exec();
+        const username = user.username;
+        const user_permission = user.user_permission;
+        const [data,catArr,budgetArr,spentArr,deltaArr] = await dashboardCtrl.getData();
         const msg = "You do not have authorisation to access this page.";
-        res.render("/dashboard",msg);
+        res.render("index", {msg, username, user_permission, data,catArr,budgetArr,spentArr,deltaArr});
     }
 }
 
@@ -109,5 +118,5 @@ module.exports = {
     login,
     logout,
     isAdmin,
-    isAuth
+    isAuth,
 };

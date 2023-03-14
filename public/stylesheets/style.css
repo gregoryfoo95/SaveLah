@@ -13,8 +13,16 @@
 .container-fluid {
   padding-top:50px;
   font-family: 'Ubuntu', sans-serif;
+  text-align:left;
 }
 
+.warning {
+  color: red;
+}
+
+.user_permission {
+  color:#008CBA;
+}
 .editBtn {
     background-color: #008CBA;
       border: none;

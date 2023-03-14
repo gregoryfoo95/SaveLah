@@ -12,7 +12,7 @@
                 <br />
                 <label>Confirm Password: <input type="password" name="password2" minlength="8" /></label>
                 <br />
-                <label>Monthly Salary ($/mth): <input name="monthly_salary" placeholder="No negative amount please" step="0.01" min="0" pattern="^\s*$^[+]?([0-9]+(?:[\.][0-9]*)?|\.[0-9]+)$" /></label>
+                <label>Monthly Salary ($/mth): <input type="number" name="monthly_salary" placeholder="No negative amount please" step="0.01" min="0" pattern="^\s*$^[+]?([0-9]+(?:[\.][0-9]*)?|\.[0-9]+)$" /></label>
                 <br />
                 <label>Gender:</label>
                 <select name="gender">
@@ -21,8 +21,17 @@
                     <option value="NA">NA</option>
                 </select>
                 <br />
-                <label>Date of Birth: <input type="date" name="dob" /></label>
+                <label>Date of Birth: <input type="date" name="dob" id="date" /></label>
+                <script>
+                    $('#date').val(new Date().toJSON().slice(0, 10));
+                </script>
                 <br />
+                <label>Permission Rights:</label>
+                <select name="user_permission">
+                    <option value="Admin">Admin</option>
+                    <option value="User">User</option>
+                </select>
+                <br/>
                 <button class="userBtn" >Register</button>
             </fieldset>
         </form>
