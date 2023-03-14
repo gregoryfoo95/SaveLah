@@ -12,12 +12,15 @@
     z-index: 100;
     padding: 0px 0 0 10px;
     border-right: 1px solid #d3d3d3;
+    text-align: left;
+
 }
 
 .left-sidebar {
     position: sticky;
     top: 01;
     height: calc(100vh - 70px)
+    
 }
 
 .sidebar-nav li .nav-link {

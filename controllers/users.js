@@ -83,10 +83,31 @@ const logout = async (req,res) => {
     }
 }
 
+const isAuth = async (req, res, next) => {
+  if (req.session.userid) {
+    const user = await User.findById(req.session.userid).exec();
+    res.locals.user = user;
+    next();
+  } else {
+    res.render("users/login", {msg: "You do not have authorisation to access this page."});
+  }
+};
+
+const isAdmin = async (req,res,next) => {
+    if (req.session.user_permission === "Admin") { //remember to add into other codes
+        return next();
+    } else {
+        const msg = "You do not have authorisation to access this page.";
+        res.render("/dashboard",msg);
+    }
+}
+
 module.exports = {
     loginPage,
     registerPage,
     register,
     login,
-    logout
+    logout,
+    isAdmin,
+    isAuth
 };

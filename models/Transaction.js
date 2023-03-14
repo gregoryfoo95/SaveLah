@@ -8,10 +8,6 @@ const transactionSchema = new Schema(
                 ref: "Category",
                 required:true,
     },
-    user_id: { type: Schema.Types.ObjectId,
-               ref: "User",
-               required: true,
-    }, //potentially create inconsistencies 
     date: {type: Date,
            required: true,
     

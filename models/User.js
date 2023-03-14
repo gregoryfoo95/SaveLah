@@ -21,7 +21,11 @@ const userSchema = new Schema(
 
     dob: { type: Date,
            required: true,
-    }
+    },
+
+    user_permission: { type: String,
+                  required: true,
+                }
   },
   {
     timestamps: true,
