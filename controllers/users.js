@@ -3,7 +3,7 @@ const Category  = require("../models/Category");
 const dashboardCtrl = require("../controllers/dashboard");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
-
+const mongoose = require("mongoose");
 
 /**
  *
@@ -41,9 +41,14 @@ const register = async (req,res) => {
             res.render("users/register", {msg: "Your passwords do not match"});
             return;
         }
-    } catch(err) {
-            res.send(404, "Error creating user");
+    } catch(error) {
+        if (error instanceof mongoose.Error.ValidationError) {
+            const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
+            res.status(400).send(`Validation Error: ${errorMessage}`);
+        } else {
+            res.status(500).send('Internal Server Error');
         }
+    }
 }
 
 const login = async (req,res) => {
@@ -68,8 +73,13 @@ const login = async (req,res) => {
                 res.render("users/login", context);
             }
         });
-        } catch(err) {
-            res.send(404, "Error with login");
+        } catch(error) {
+            if (error instanceof mongoose.Error.ValidationError) {
+            const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
+            res.status(400).send(`Validation Error: ${errorMessage}`);
+        } else {
+            res.status(500).send('Internal Server Error');
+        }
         }
 }
 
@@ -80,25 +90,39 @@ const logout = async (req,res) => {
             const context = {msg: "You have been logged out."};
             res.render("home", context);
         }
-    } catch(err) {
-        console.log(err);
-        res.send(404, "Error with logout");
+    } catch(error) {
+        if (error instanceof mongoose.Error.ValidationError) {
+            const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
+            res.status(400).send(`Validation Error: ${errorMessage}`);
+        } else {
+            res.status(500).send('Internal Server Error');
+        }
     }
 }
 
 const isAuth = async (req, res, next) => {
-  if (req.session.userid) {
-    const user = await User.findById(req.session.userid).exec();
-    res.locals.user = user;
-    next();
-  } else {
-    res.render("users/login", {
-        msg: "You do not have authorisation to access this page.",
-    });
-  }
+    try {
+        if (req.session.userid) {
+            const user = await User.findById(req.session.userid).exec();
+            res.locals.user = user;
+            next();
+        } else {
+            res.render("users/login", {
+                msg: "You do not have authorisation to access this page.",
+            });
+        }
+    } catch (error) {
+        if (error instanceof mongoose.Error.ValidationError) {
+            const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
+            res.status(400).send(`Validation Error: ${errorMessage}`);
+        } else {
+            res.status(500).send('Internal Server Error');
+        }
+    }
 };
 
 const isAdmin = async (req,res,next) => {
+    try {
     if (req.session.user_permission === "Admin") { //remember to add into other codes
         return next();
     } else {
@@ -109,7 +133,14 @@ const isAdmin = async (req,res,next) => {
         const msg = "You do not have authorisation to access this page.";
         res.render("index", {msg, username, user_permission, data,catArr,budgetArr,spentArr,deltaArr});
     }
-}
+} catch (error) {
+    if (error instanceof mongoose.Error.ValidationError) {
+        const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
+        res.status(400).send(`Validation Error: ${errorMessage}`);
+    } else {
+        res.status(500).send('Internal Server Error');
+    }
+}}
 
 module.exports = {
     loginPage,
