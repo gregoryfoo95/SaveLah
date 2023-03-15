@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-// Shortcut to the mongoose.Schema class
 const Schema = mongoose.Schema;
 const Joi = require('joi');
 
@@ -27,10 +26,13 @@ const categorySchema = new Schema(
              required: true,
              validate: {
               validator: function (value) {
-                return value > 0;
+                const schema = Joi.number().min(0).required();
+                const { error } = schema.validate(value);
+                return error ? false : true;
               },
-              message:"Budget must be greater than 0",
-             }
+              message: (props) =>
+                `${props.value} is not a valid budget amount. Must be greater than or equals to 0.`,
+            },
     },
   },
   
