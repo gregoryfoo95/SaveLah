@@ -61,7 +61,7 @@ const login = async (req,res) => {
                 req.session.user_permission = user.user_permission;
                 const user_permission = user.user_permission;
                 const categories = await Category.find().exec();
-                const [data,catArr,budgetArr,spentArr,deltaArr] = await dashboardCtrl.getData();
+                const [data,catArr,budgetArr,spentArr,deltaArr] = await dashboardCtrl.getData(req);
                 res.render("index", {username,user_permission,categories,data,catArr,budgetArr,spentArr,deltaArr,msg:""});
             } else {
                 const context = { msg: "Password is wrong" };
@@ -105,7 +105,7 @@ const isAdmin = async (req,res,next) => {
         const user = await User.findById(req.session.userid).exec();
         const username = user.username;
         const user_permission = user.user_permission;
-        const [data,catArr,budgetArr,spentArr,deltaArr] = await dashboardCtrl.getData();
+        const [data,catArr,budgetArr,spentArr,deltaArr] = await dashboardCtrl.getData(req);
         const msg = "You do not have authorisation to access this page.";
         res.render("index", {msg, username, user_permission, data,catArr,budgetArr,spentArr,deltaArr});
     }

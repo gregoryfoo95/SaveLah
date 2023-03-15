@@ -1,6 +1,5 @@
 const Transaction = require("../models/Transaction");
 const Category = require("../models/Category");
-const dashboardCtrl = require("../controllers/dashboard");
 /**
  *
  * @param {import("express").Request} req
