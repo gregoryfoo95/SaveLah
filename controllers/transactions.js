@@ -1,6 +1,6 @@
 const Transaction = require("../models/Transaction");
 const Category = require("../models/Category");
-
+const dashboardCtrl = require("../controllers/dashboard");
 /**
  *
  * @param {import("express").Request} req
@@ -11,14 +11,23 @@ const Category = require("../models/Category");
 
 const summary = async (req,res) => {
     try {
-        const categories = await Category.find().exec();
-        const transactions = await Transaction.find().populate("category_id").exec();
-        console.log(transactions);
-        const context = {msg: "",
-                        transactions,
-                        categories,
-                    };
-        res.render("transactions/summary", context);
+        const user_id = req.session.userid;
+        const categories = await Category.find({user_id:user_id}).exec();
+        const transactions = await Transaction
+            .find()
+            .populate(
+                {path: "category_id",
+                match: { user_id: user_id }
+            })
+            .exec();
+            console.log(transactions);
+            const context = {msg: "",
+                            transactions: transactions.filter((transaction) => {
+                                return transaction.category_id !== null;
+                            }),
+                            categories,
+                        };
+            res.render("transactions/summary", context);
     } catch(err) {
         res.send(404,"Transactions cannot be shown")
     }

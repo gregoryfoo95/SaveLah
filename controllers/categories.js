@@ -11,14 +11,15 @@ const Transaction = require("../models/Transaction");
 
 const summary = async (req,res) => {
     try {
+        const user_id = req.session.userid;
         //including search query functionality
         const pattern = req.query.category_name;
         if (pattern) {
         const Re = new RegExp(pattern.toUpperCase());
-        const categories = await Category.find({category_name: Re}).exec();
+        const categories = await Category.find({category_name: Re, user_id: user_id}).exec();
             res.render("categories/summary", {msg: "", categories});
         } else {
-        const categories = await Category.find().exec();
+        const categories = await Category.find({user_id: user_id}).exec();
         const context = {msg: "",
                         categories};
         res.render("categories/summary", context);
