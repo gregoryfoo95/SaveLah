@@ -10,7 +10,7 @@ const userSchema = new Schema(
       unique: true,
       validate: {
         validator: function(value) {
-          const schema = Joi.string.alphanum().min(1).max(30).required();
+          const schema = Joi.string().alphanum().min(1).max(30).required();
           const { error } = schema.validate(value);
           return error ? false : true;
         },
@@ -43,7 +43,7 @@ const userSchema = new Schema(
                 `${props.value} is not a valid salary amount. Must be greater than or equals to 0.`,
             },
     },
-    
+
     gender: {type: String,
              required: true,
     },

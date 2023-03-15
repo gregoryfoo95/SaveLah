@@ -20,13 +20,14 @@ const summary = async (req,res) => {
                 match: { user_id: user_id }
             })
             .exec();
-            const context = {msg: "",
-                            transactions: transactions.filter((transaction) => {
-                                return transaction.category_id !== null;
-                            }),
-                            categories,
-                        };
-            res.render("transactions/summary", context);
+        const context = {
+            msg: "",
+            transactions: transactions.filter((transaction) => {
+                return transaction.category_id !== null;
+            }),
+            categories,
+        };
+        res.render("transactions/summary", context);
     } catch(error) {
         if (error instanceof mongoose.Error.ValidationError) {
             const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
@@ -59,8 +60,8 @@ const create = async (req, res) => {
         res.render("transactions/summary", {
             msg, 
             transactions: transactions.filter((transaction) => {
-                                return transaction.category_id !== null;
-                            }),
+                return transaction.category_id !== null;
+            }),
             categories
         });
     } catch (error) {

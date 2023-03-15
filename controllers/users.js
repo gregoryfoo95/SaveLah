@@ -25,7 +25,8 @@ const registerPage = async (req,res) => {
 
 const register = async (req,res) => {
     try {
-        if (req.body.password === req.body.password2) {
+        const username = await User.find({username: req.body.username}).exec();
+        if (req.body.password === req.body.password2 && !username.length) {
             bcrypt.hash(req.body.password, saltRounds, async (err,hash) => {
             await User.create(
                 { username: req.body.username,
@@ -37,9 +38,11 @@ const register = async (req,res) => {
                 });
             res.redirect("/user/login/new");
         });
-        } else {
-            res.render("users/register", {msg: "Your passwords do not match"});
+        } else if (req.body.password !== req.body.password2) {
+            res.render("users/register", {msg: "Your passwords do not match."});
             return;
+        } else if (username.length) {
+            res.render("users/register", {msg: "Your username has been taken!"});
         }
     } catch(error) {
         if (error instanceof mongoose.Error.ValidationError) {
