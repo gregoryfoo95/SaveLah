@@ -1,6 +1,6 @@
 const Category = require("../models/Category");
 const Transaction = require("../models/Transaction");
-
+const mongoose = require("mongoose");
 /**
  *
  * @param {import("express").Request} req
@@ -53,11 +53,17 @@ const create = async (req, res) => {
                 budget: req.body.budget,
                 user_id: req.session.userid,
             });
-        categories = await Category.find().exec();    
+        const user_id = req.session.userid;
+        categories = await Category.find({user_id: user_id}).exec();    
         const msg = `You have added ${req.body.category_name}.`;    
         res.render("categories/summary", {msg,categories});
-    } catch (err) {
-        res.send(404, "Error adding category");
+    } catch (error) {
+        if (error instanceof mongoose.Error.ValidationError) {
+            const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
+            res.status(400).send(`Validation Error: ${errorMessage}`);
+        } else {
+            res.status(500).send('Internal Server Error');
+        }
     }
 }
 
@@ -73,7 +79,8 @@ const edit = async (req,res) => {
     try {
         const id = req.params.id;
         await Category.findByIdAndUpdate(id, req.body, {new:true}).exec();
-        const categories = await Category.find().exec();
+        const user_id = req.session.userid;
+        const categories = await Category.find({user_id:user_id}).exec();
         const context = {msg: `You have updated ${req.body.category_name}.`, categories}
         res.render("categories/summary",context)
     } catch (err) {
@@ -91,12 +98,13 @@ const del = async (req,res) => {
             const category = await Category.findById(id).exec();
             const msg = `You have deleted ${category.category_name}.`;
             await Category.findByIdAndDelete(id).exec();
-            //await Transaction.deleteMany({category_id: id});
-            const categories = await Category.find().exec();
+            const user_id = req.session.userid;
+            const categories = await Category.find({user_id: user_id}).exec();
             const context = {msg, categories}
             res.render("categories/summary",context);
         } else {
-            const categories = await Category.find().exec();
+            const user_id = req.session.userid;
+            const categories = await Category.find({user_id: user_id}).exec();
             const context = {msg: `You cannot delete this category as there are existing transactions tagged to it.`, categories}
             res.render("categories/summary",context);
     }} catch (err) {

@@ -26,7 +26,7 @@ const registerPage = async (req,res) => {
 const register = async (req,res) => {
     try {
         if (req.body.password === req.body.password2) {
-            bcrypt.hash(req.body.password, saltRounds, async(err,hash) => {
+            bcrypt.hash(req.body.password, saltRounds, async (err,hash) => {
             await User.create(
                 { username: req.body.username,
                 password: hash,
