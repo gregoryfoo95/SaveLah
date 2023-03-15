@@ -12,23 +12,46 @@ const mongoose = require("mongoose");
 const summary = async (req,res) => {
     try {
         const user_id = req.session.userid;
-        const categories = await Category.find({user_id:user_id}).exec();
-        const transactions = await Transaction
+        const pattern = req.query.category_name;
+        if (pattern) {
+            const Re = new RegExp(pattern.toUpperCase());
+            const categories = await Category.find({ user_id: user_id}).exec();
+            const transactions = await Transaction
+            .find()
+            .populate(
+                {path: "category_id",
+                 match: { 
+                    user_id: user_id,
+                    category_name: Re,
+                }
+            })
+            .exec();
+            const context = {
+                msg: "",
+                transactions: transactions.filter((transaction) => {
+                    return transaction.category_id !== null;
+                }),
+                categories,
+            };
+            res.render("transactions/summary", context);
+        } else {
+            const categories = await Category.find({user_id:user_id}).exec();
+            const transactions = await Transaction
             .find()
             .populate(
                 {path: "category_id",
                 match: { user_id: user_id }
             })
             .exec();
-        const context = {
-            msg: "",
-            transactions: transactions.filter((transaction) => {
-                return transaction.category_id !== null;
-            }),
-            categories,
-        };
+            const context = {
+                msg: "",
+                transactions: transactions.filter((transaction) => {
+                    return transaction.category_id !== null;
+                }),
+                categories,
+            };
         res.render("transactions/summary", context);
-    } catch(error) {
+    }} catch(error) {
         if (error instanceof mongoose.Error.ValidationError) {
             const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
             res.status(400).send(`Validation Error: ${errorMessage}`);
