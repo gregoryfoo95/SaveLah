@@ -22,17 +22,18 @@ const transactionSchema = new Schema(
       max: new Date()
     },
         
-    amount: {type: Number,
-             required: true,
-             validate: {
-              validator: function (value) {
-                const schema = Joi.number().min(0).required();
-                const { error } = schema.validate(value);
-                return error ? false : true;
-              },
-              message: (props) =>
-                `${props.value} is not a valid expenditure amount. Must be greater than or equals to 0.`,
-            },
+    amount: {
+      type: Number,
+      required: true,
+      validate: {
+        validator: function (value) {
+          const schema = Joi.number().min(0).required();
+          const { error } = schema.validate(value);
+          return error ? false : true;
+        },
+        message: (props) =>
+          `${props.value} is not a valid expenditure amount. Must be greater than or equals to 0.`,
+      },
     },
   },
   

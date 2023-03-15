@@ -24,11 +24,13 @@
     data: {
       labels: catArr,
       datasets: [
-        {label: "Budget ($)",
-                  data: budgetArr,
-                  backgroundColor: labelColors,
-                  borderColor: 'azure',
-      }]
+        {
+          label: "Budget ($)",
+          data: budgetArr,
+          backgroundColor: labelColors,
+          borderColor: 'azure',
+        }
+      ]
     },
     options: {
       responsive: true,
@@ -94,12 +96,15 @@
     type: "bar",
     data: {
       labels: catArr1,
-      datasets: [{label: "Expenditure ($)", 
-                  data: spentArr,
-                  backgroundColor: labelColors,
-                  borderColor: 'azure',
-                  borderWidth: 1
-                }]
+      datasets: [
+        {
+          label: "Expenditure ($)", 
+          data: spentArr,
+          backgroundColor: labelColors,
+          borderColor: 'azure',
+          borderWidth: 1
+        }
+      ]
     },
      options: {
       responsive: true,
@@ -166,12 +171,14 @@
     type: "doughnut",
     data: {
       labels: catArr,
-      datasets: [{
-        label: "Remaining budget ($)",
-        data: deltaArr,
-        backgroundColor: labelColors,
-        borderColor: 'azure',
-      }]
+      datasets: [
+        {
+          label: "Remaining budget ($)",
+          data: deltaArr,
+          backgroundColor: labelColors,
+          borderColor: 'azure',
+        }
+      ]
     },
     options: {
       responsive: true,
@@ -215,27 +222,31 @@
     type: "bar",
     data: {
       labels: catArr3,
-      datasets: [{
-        label: "Budget ($)",
-        data: budgetArr3,
-        backgroundColor: labelColors,
-        borderColor: typeColors[0],
-        borderWidth: 5,
-      },
-      {
-        label: "Spent ($)",
-        data: spentArr3,
-        backgroundColor: labelColors,
-        borderColor: typeColors[1],
-        borderWidth: 5,
-      },
-      {
-        label: "Delta ($)",
-        data: deltaArr3,
-        backgroundColor: labelColors,
-        borderColor: typeColors[2],
-        borderWidth: 5,
-      }]
+      datasets: [
+        {
+          label: "Budget ($)",
+          data: budgetArr3,
+          backgroundColor: labelColors,
+          borderColor: typeColors[0],
+          borderWidth: 5,
+        },
+
+        {
+          label: "Spent ($)",
+          data: spentArr3,
+          backgroundColor: labelColors,
+          borderColor: typeColors[1],
+          borderWidth: 5,
+        },
+
+        {
+          label: "Delta ($)",
+          data: deltaArr3,
+          backgroundColor: labelColors,
+          borderColor: typeColors[2],
+          borderWidth: 5,
+        }
+      ]
     },
     options: {
       responsive: true,

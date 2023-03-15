@@ -17,25 +17,26 @@ const categorySchema = new Schema(
           `${props.value} is not a valid category name. Must be between 1 and 30 characters.`,
       },
     },
-    user_id: {type: Schema.Types.ObjectId,
-              required: true,
-              ref: "User",
+    user_id: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
     },
 
-    budget: {type: Number,
-             required: true,
-             validate: {
-              validator: function (value) {
-                const schema = Joi.number().min(0).required();
-                const { error } = schema.validate(value);
-                return error ? false : true;
-              },
-              message: (props) =>
-                `${props.value} is not a valid budget amount. Must be greater than or equals to 0.`,
-            },
+    budget: {
+      type: Number,
+      required: true,
+      validate: {
+      validator: function (value) {
+        const schema = Joi.number().min(0).required();
+        const { error } = schema.validate(value);
+          return error ? false : true;
+      },
+      message: (props) =>
+        `${props.value} is not a valid budget amount. Must be greater than or equals to 0.`,
+      },
     },
   },
-  
   {
     timestamps: true,
   }

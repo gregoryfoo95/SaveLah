@@ -31,21 +31,23 @@ const userSchema = new Schema(
       }
     },
     
-    monthly_salary: {type: Number,
-             required: true,
-             validate: {
-              validator: function (value) {
-                const schema = Joi.number().min(0).required();
-                const { error } = schema.validate(value);
-                return error ? false : true;
-              },
-              message: (props) =>
-                `${props.value} is not a valid salary amount. Must be greater than or equals to 0.`,
-            },
+    monthly_salary: {
+      type: Number,
+      required: true,
+      validate: {
+        validator: function (value) {
+        const schema = Joi.number().min(0).required();
+        const { error } = schema.validate(value);
+          return error ? false : true;
+        },
+        message: (props) =>
+          `${props.value} is not a valid salary amount. Must be greater than or equals to 0.`,
+      },
     },
 
-    gender: {type: String,
-             required: true,
+    gender: {
+      type: String,
+      required: true,
     },
 
     dob: {
@@ -62,9 +64,10 @@ const userSchema = new Schema(
       max: new Date()
     },
 
-    user_permission: { type: String,
-                  required: true,
-                }
+    user_permission: {
+      type: String,
+      required: true,
+    }
   },
 
   {
