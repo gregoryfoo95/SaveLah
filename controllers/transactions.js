@@ -1,6 +1,6 @@
 const Transaction = require("../models/Transaction");
 const Category = require("../models/Category");
-
+const mongoose = require("mongoose");
 /**
  *
  * @param {import("express").Request} req
@@ -27,8 +27,13 @@ const summary = async (req,res) => {
                             categories,
                         };
             res.render("transactions/summary", context);
-    } catch(err) {
-        res.send(404,"Transactions cannot be shown")
+    } catch(error) {
+        if (error instanceof mongoose.Error.ValidationError) {
+            const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
+            res.status(400).send(`Validation Error: ${errorMessage}`);
+        } else {
+            res.status(500).send('Internal Server Error');
+        }
     }
 }
 
@@ -58,8 +63,13 @@ const create = async (req, res) => {
                             }),
             categories
         });
-    } catch (err) {
-        res.send(404, "Error adding transaction");
+    } catch (error) {
+         if (error instanceof mongoose.Error.ValidationError) {
+            const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
+            res.status(400).send(`Validation Error: ${errorMessage}`);
+        } else {
+            res.status(500).send('Internal Server Error');
+        }
     }
 }
 
@@ -71,8 +81,13 @@ const editForm = async (req,res) => {
         const categories = await Category.find({user_id: user_id}).exec();
         const context = {msg: "", transaction, categories};
         res.render("transactions/edit", context);
-} catch (err) {
-    res.send(404, "Error opening edit form.")
+} catch (error) {
+    if (error instanceof mongoose.Error.ValidationError) {
+            const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
+            res.status(400).send(`Validation Error: ${errorMessage}`);
+        } else {
+            res.status(500).send('Internal Server Error');
+        }
 }
 }
 
@@ -97,8 +112,13 @@ const edit = async (req,res) => {
             transaction,categories
         };
         res.render("transactions/summary", context)
-    } catch (err) {
-        res.send(404, "Error updating transaction");
+    } catch (error) {
+        if (error instanceof mongoose.Error.ValidationError) {
+            const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
+            res.status(400).send(`Validation Error: ${errorMessage}`);
+        } else {
+            res.status(500).send('Internal Server Error');
+        }
     }
 }
 
@@ -123,8 +143,13 @@ const del = async (req,res) => {
             }),
         };
         res.render("transactions/summary", context);
-    } catch (err) {
-        res.send(404,"Error deleting transaction")
+    } catch (error) {
+        if (error instanceof mongoose.Error.ValidationError) {
+            const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
+            res.status(400).send(`Validation Error: ${errorMessage}`);
+        } else {
+            res.status(500).send('Internal Server Error');
+        }
     }
 }
 

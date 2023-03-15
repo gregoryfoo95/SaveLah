@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-// Shortcut to the mongoose.Schema class
+const Joi = require('joi');
 const Schema = mongoose.Schema;
 
 const transactionSchema = new Schema(
@@ -8,13 +8,31 @@ const transactionSchema = new Schema(
                 ref: "Category",
                 required:true,
     },
-    date: {type: Date,
-           required: true,
-    
+    date: {
+      type: Date,
+      required: true,
+      validate: {
+        validator: function(value) {
+          const schema = Joi.date().required();
+          const { error } = schema.validate(value);
+          return error ? false : true;
+        },
+        message: props => `${props.value} is not a valid date format!`
       },
+      max: new Date()
+    },
         
     amount: {type: Number,
-            required: true,
+             required: true,
+             validate: {
+              validator: function (value) {
+                const schema = Joi.number().min(0).required();
+                const { error } = schema.validate(value);
+                return error ? false : true;
+              },
+              message: (props) =>
+                `${props.value} is not a valid expenditure amount. Must be greater than or equals to 0.`,
+            },
     },
   },
   

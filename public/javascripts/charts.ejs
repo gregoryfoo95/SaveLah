@@ -23,7 +23,8 @@
     type: "bar",
     data: {
       labels: catArr,
-      datasets: [{label: "Budget ($)",
+      datasets: [
+        {label: "Budget ($)",
                   data: budgetArr,
                   backgroundColor: labelColors,
                   borderColor: 'azure',
@@ -32,6 +33,12 @@
     options: {
       responsive: true,
       plugins: {
+        legend: {
+          display: true,
+          labels: {
+            boxWidth:0,
+          }
+        },
         title: {
           display: true,
           text: 'Budget Allocation',
@@ -39,18 +46,37 @@
             size: 20,
             family: 'Century Gothic',
           }
-        }
+        },
       },
       tooltips: { enabled: true },
       hover: { mode: null },
       scales: {
-        yAxes: [{
-          title: "Amount ($)",
-          ticks: {
-            beginAtZero: true,
-            stepSize: 5000,
+        x: {
+          display: true,
+          title: {
+            display: true,
+            text: 'Category',
+            color: '#333',
+            font: {
+              family: 'Century Gothic',
+              size: 20,
+              weight: 'bold',
+            },
           }
-        }]
+        },
+        y: {
+          display: true,
+          title: {
+            display: true,
+            text: 'Amount ($)',
+            color: '#333',
+            font: {
+              family: 'Century Gothic',
+              size: 20,
+              weight: 'bold',
+            },
+          }
+        }
       }
     }
   };
@@ -75,8 +101,15 @@
                   borderWidth: 1
                 }]
     },
-    options: {
+     options: {
+      responsive: true,
       plugins: {
+        legend: {
+          display: true,
+          labels: {
+            boxWidth: 0,
+          }
+        },
         title: {
           display: true,
           text: 'Expenditure on Categories',
@@ -84,17 +117,37 @@
             size: 20,
             family: 'Century Gothic',
           }
-        }
+        },
       },
-      tooltips: { enabled: false },
+      tooltips: { enabled: true },
       hover: { mode: null },
       scales: {
-        yAxes: [{
-          ticks: {
-            beginAtZero: true,
-            stepSize: 50,
+        x: {
+          display: true,
+          title: {
+            display: true,
+            text: 'Category',
+            color: '#333',
+            font: {
+              family: 'Century Gothic',
+              size: 20,
+              weight: 'bold',
+            },
           }
-        }]
+        },
+        y: {
+          display: true,
+          title: {
+            display: true,
+            text: 'Amount ($)',
+            color: '#333',
+            font: {
+              family: 'Century Gothic',
+              size: 20,
+              weight: 'bold',
+            },
+          }
+        }
       }
     }
   };
@@ -167,39 +220,71 @@
         data: budgetArr3,
         backgroundColor: labelColors,
         borderColor: typeColors[0],
-        borderWidth: 3,
+        borderWidth: 5,
       },
       {
         label: "Spent ($)",
         data: spentArr3,
         backgroundColor: labelColors,
-        borderColor: 'azure',
         borderColor: typeColors[1],
-        borderWidth: 3,
+        borderWidth: 5,
       },
       {
         label: "Delta ($)",
         data: deltaArr3,
         backgroundColor: labelColors,
-        borderColor: 'azure',
         borderColor: typeColors[2],
-        borderWidth: 3,
+        borderWidth: 5,
       }]
     },
     options: {
       responsive: true,
       plugins: {
+        legend: {
+          display: true,
+          labels: {
+            boxWidth: 3,
+          }
+        },
         title: {
           display: true,
-          text: 'Overall Finances for all Categories',
+          text: 'Overall Finances',
           font: {
             size: 20,
             family: 'Century Gothic',
           }
-        }
+        },
       },
-      tooltips: { enabled: false },
+      tooltips: { enabled: true },
       hover: { mode: null },
+      scales: {
+        x: {
+          display: true,
+          title: {
+            display: true,
+            text: 'Category',
+            color: '#333',
+            font: {
+              family: 'Century Gothic',
+              size: 20,
+              weight: 'bold',
+            },
+          }
+        },
+        y: {
+          display: true,
+          title: {
+            display: true,
+            text: 'Amount ($)',
+            color: '#333',
+            font: {
+              family: 'Century Gothic',
+              size: 20,
+              weight: 'bold',
+            },
+          }
+        }
+      }
     }
   };
 
