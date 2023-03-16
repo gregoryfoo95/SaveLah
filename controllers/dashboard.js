@@ -82,9 +82,15 @@ const getData = async (req) => {
         
 }
 
+const fetchData = async (req,res) => {
+    const data = await getData(req);
+    res.send(data);
+
+}
 
 module.exports = {
     home,
     dashboard,
     getData,
+    fetchData
 };
