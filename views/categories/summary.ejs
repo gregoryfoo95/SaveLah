@@ -8,7 +8,7 @@
                 <%=msg%>
             </div>
             <div class="row bg-dark text-white">
-                <form action="/categories" method="POST">
+                <form action="/categories/all" method="POST">
                     <fieldset>
                         <legend>Add Category & Budget</legend>
                         <label>Category: <input name="category_name" placeholder="Category" pattern="[A-Za-z0-9 ]+" /></label>
@@ -21,7 +21,7 @@
             <div class="row bg-dark text-white">
                 <form method="GET">
                     <label>
-                        Search for Category: <input placeholder="Case-insensitive" name="category_name" type="search" />
+                        Search for Category: <input placeholder="Case-insensitive" name="category_name_search" type="search" />
                     </label>
                     <button class="searchBtn" >Search</button>
                 </form>
