@@ -12,10 +12,10 @@ const mongoose = require("mongoose");
 const summary = async (req,res) => {
     try {
         const user_id = req.session.userid;
-        const pattern = req.query.category_name;
+        const pattern = req.query.category_name_search;
         if (pattern) {
             const Re = new RegExp(pattern.toUpperCase());
-            const categories = await Category.find({ user_id: user_id}).exec();
+            const categories = await Category.find({category_name: Re, user_id: user_id}).exec();
             const transactions = await Transaction
             .find()
             .populate(
@@ -63,23 +63,52 @@ const summary = async (req,res) => {
 
 const create = async (req, res) => {
     try {
+        const { date, amount } = req.body;
         const user_id = req.session.userid;
         const categories = await Category.find({user_id: user_id}).exec()
-        await Transaction.create(
-            {
-                category_id: req.body.category_id,
-                user_id: user_id,
-                date: req.body.date,
-                amount: req.body.amount,
-            });
-        const transactions = await Transaction
+        let transactions = await Transaction
             .find()
             .populate(
                 {path: "category_id",
                 match: { user_id: user_id }
             })
             .exec();
-        const msg = `You have added a transaction`;
+        if (amount === "") {
+            const context = {
+                msg: "Amount fields should not be left empty.", 
+                categories, 
+                transactions: transactions.filter((transaction) => {
+                return transaction.category_id !== null;
+                }),
+            }
+            res.render("transactions/summary", context);
+            return;
+        } else if (amount < 0) {
+            const context = {
+                msg: "Amount fields should not be left empty.", 
+                categories, 
+                transactions: transactions.filter((transaction) => {
+                return transaction.category_id !== null;
+                }),
+            }
+            res.render("transactions/summary", context);
+            return;
+        }
+        await Transaction.create(
+            {
+                category_id: req.body.category_id,
+                user_id: user_id,
+                date: date,
+                amount: amount,
+            });
+        transactions = await Transaction
+            .find()
+            .populate(
+                {path: "category_id",
+                match: { user_id: user_id }
+            })
+            .exec();
+        const msg = `You have added a transaction.`;
         res.render("transactions/summary", {
             msg, 
             transactions: transactions.filter((transaction) => {

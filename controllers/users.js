@@ -1,5 +1,4 @@
 const User = require("../models/User");
-const Category  = require("../models/Category");
 const dashboardCtrl = require("../controllers/dashboard");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
@@ -25,8 +24,8 @@ const registerPage = async (req,res) => {
 
 const register = async (req,res) => {
     try {
-        const username = await User.find({username: req.body.username}).exec();
-        if (req.body.password === req.body.password2 && !username.length) {
+        const user = await User.find({username: req.body.username}).exec();
+        if (req.body.password === req.body.password2 && !user.length) {
             bcrypt.hash(req.body.password, saltRounds, async (err,hash) => {
             await User.create(
                 { username: req.body.username,
@@ -41,8 +40,11 @@ const register = async (req,res) => {
         } else if (req.body.password !== req.body.password2) {
             res.render("users/register", {msg: "Your passwords do not match."});
             return;
-        } else if (username.length) {
+        } else if (user.length) {
             res.render("users/register", {msg: "Your username has been taken!"});
+        } else if (!user.monthly_salary) {
+            res.render("users/register", {msg: "Please key in your monthly salary."});
+            return;
         }
     } catch(error) {
         if (error instanceof mongoose.Error.ValidationError) {
@@ -68,9 +70,8 @@ const login = async (req,res) => {
                 req.session.userid = user._id;
                 req.session.user_permission = user.user_permission;
                 const user_permission = user.user_permission;
-                const categories = await Category.find().exec();
                 const [data,catArr,budgetArr,spentArr,deltaArr] = await dashboardCtrl.getData(req);
-                res.render("index", {user,username,user_permission,categories,data,catArr,budgetArr,spentArr,deltaArr,msg:""});
+                res.render("index", {user,username,user_permission,data,catArr,budgetArr,spentArr,deltaArr,msg:""});
             } else {
                 const context = { msg: "Password is wrong" };
                 res.render("users/login", context);
