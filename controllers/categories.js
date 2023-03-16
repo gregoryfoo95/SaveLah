@@ -40,7 +40,7 @@ const create = async (req, res) => {
     const {category_name, budget} = req.body;
     const user_id = req.session.userid;
     try {
-        let categories = await Category.find().exec();
+        let categories = await Category.find({user_id: user_id}).exec();
         const category = await Category.find({category_name: category_name})
         if (category_name === "" || budget === "") {
             const context = {msg: "Category and Budget fields should not be left empty.", categories}
