@@ -24,7 +24,6 @@ A development Trello-styled whiteboard for the planning phase can be found <a hr
 - Express (Backend)
 - MongoDB (Database)
 - Git for Version Control
-- Mocha and Chai for Unit Testing
 - Window Powershell for Command Line Prompt
 
 
