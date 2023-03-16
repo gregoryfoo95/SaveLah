@@ -38,6 +38,12 @@ A development Trello-styled whiteboard for the planning phase can be found <a hr
 ### _Current Dashboard_
 <img src = "https://github.com/gregoryfoo95/SaveLah/blob/main/Planning/Dashboard.png?raw=true" width="800" height="400" title="Initial User Form">
 
+### _Current Category Page_
+<img src = "https://github.com/gregoryfoo95/SaveLah/blob/main/Planning/Categories.png?raw=true" width="800" height="400" title="Initial User Form">
+
+### _Current Transaction Page_
+<img src = "https://github.com/gregoryfoo95/SaveLah/blob/main/Planning/Transactions.png?raw=true" width="800" height="400" title="Initial User Form">
+
 ## Users' Stories
 
 | As a ...  | I want ...  | Feature
