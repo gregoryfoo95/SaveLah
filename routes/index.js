@@ -5,5 +5,5 @@ const userCtrl = require("../controllers/users");
 
 router.get('/', dashboardCtrl.home);
 router.get('/dashboard', userCtrl.isAuth, dashboardCtrl.dashboard);
-router.get('/api/data', userCtrl.isAuth, userCtrl.isAdmin, dashboardCtrl.getData);
+router.get('/api/data', userCtrl.isAuth, userCtrl.isAdmin, dashboardCtrl.fetchData);
 module.exports = router;
