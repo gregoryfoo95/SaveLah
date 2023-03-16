@@ -991,3 +991,4 @@ Before the commencement of this app, the original impression of the difficulty i
 - Further enhance CSS Bootstrap styling
 - Have a new database schema of "Projects" to contain categories and transactions
 - Have a use case for different _user_permission_: User Vs Admin
+- Allow user to close account, deleting all categories and transactions along with it
