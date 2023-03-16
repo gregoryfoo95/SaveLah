@@ -36,6 +36,6 @@ router.get("/register/new", usersCtrl.registerPage);
 router.post("/register", usersCtrl.register);
 router.post("/login", usersCtrl.login);
 router.delete("/logout", usersCtrl.logout);
-router.get("/profile/:id/edit", usersCtrl.profilePage)
-router.put("/profile", usersCtrl.updateProfile)
+router.get("/profile/:id/edit", usersCtrl.isAuth, usersCtrl.profilePage)
+router.put("/profile", usersCtrl.isAuth, usersCtrl.updateProfile)
 module.exports = router;
