@@ -1,5 +1,6 @@
 const Category = require("../models/Category");
 const Transaction = require("../models/Transaction");
+const User = require("../models/User");
 const mongoose = require("mongoose");
 /**
  *
@@ -12,14 +13,34 @@ const mongoose = require("mongoose");
 const summary = async (req,res) => {
     try {
         const user_id = req.session.userid;
+        const user = await User.findById(user_id).exec();
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+            console.log(couple)
+            
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
+        
         const pattern = req.query.category_name;
-        console.log(pattern);
         if (pattern) {
             const Re = new RegExp(pattern.toUpperCase());
-            const categories = await Category.find({category_name: Re, user_id: user_id}).exec();
+            const categories = await Category.find({category_name: Re, user_id:[user_id, partnerUser._id]}).exec();
             res.render("categories/summary", {msg: "", categories});
         } else {
-            const categories = await Category.find({user_id: user_id}).exec();
+            const categories = await Category.find({user_id: [user_id, partnerUser._id]}).exec();
             const context = {
                 msg: "",
                 categories
@@ -37,10 +58,30 @@ const summary = async (req,res) => {
 }
 
 const create = async (req, res) => {
-    const {category_name, budget} = req.body;
-    const user_id = req.session.userid;
     try {
-        let categories = await Category.find().exec();
+        const {category_name, budget} = req.body;
+        const user_id = req.session.userid;
+        const user = await User.findById(user_id).exec();
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+            console.log(couple)
+            
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
+        let categories = await Category.find({user_id: [user_id, partnerUser._id]}).exec();
         const category = await Category.find({category_name: category_name})
         if (category_name === "" || budget === "") {
             const context = {msg: "Category and Budget fields should not be left empty.", categories}
@@ -62,7 +103,7 @@ const create = async (req, res) => {
                 user_id: req.session.userid,
             }
         );
-        categories = await Category.find({user_id: user_id}).exec();    
+        categories = await Category.find({user_id: [user_id, partnerUser._id]}).exec();    
         const msg = `You have added ${req.body.category_name}.`;    
         res.render("categories/summary", {msg,categories});
     } catch (error) {
@@ -79,8 +120,28 @@ const editForm = async (req,res) => {
     try {
         const id = req.params.id;
         const user_id = req.session.userid;
+        const user = await User.findById(user_id).exec();
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+            console.log(couple)
+            
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
         const category = await Category.findById(id).exec();
-        const categories = await Category.find({user_id: user_id}).exec();
+        const categories = await Category.find({user_id: [user_id, partnerUser._id]}).exec();
         const context = {msg: "", category, categories};
         res.render("categories/edit", context);
     } catch (error) {
@@ -97,8 +158,28 @@ const edit = async (req,res) => {
     try {
         const id = req.params.id;
         const user_id = req.session.userid;
+        const user = await User.findById(user_id).exec();
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+            console.log(couple)
+            
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
         await Category.findByIdAndUpdate(id, req.body, {new:true}).exec();
-        const categories = await Category.find({user_id:user_id}).exec();
+        const categories = await Category.find({user_id:[user_id, partnerUser._id]}).exec();
         const context = {msg: `You have updated ${req.body.category_name}.`, categories}
         res.render("categories/summary",context)
     } catch (error) {
@@ -115,16 +196,36 @@ const del = async (req,res) => {
     try {
         const id = req.params.id;
         const user_id = req.session.userid;
+        const user = await User.findById(user_id).exec();
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+            console.log(couple)
+            
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
         const transaction = await Transaction.find({category_id: id}).exec();
         if (!transaction.length) {
             const category = await Category.findById(id).exec();
             const msg = `You have deleted ${category.category_name}.`;
             await Category.findByIdAndDelete(id).exec();
-            const categories = await Category.find({user_id: user_id}).exec();
+            const categories = await Category.find({user_id: [user_id, partnerUser._id]}).exec();
             const context = {msg, categories}
             res.render("categories/summary",context);
         } else {
-            const categories = await Category.find({user_id: user_id}).exec();
+            const categories = await Category.find({user_id: [user_id, partnerUser._id]}).exec();
             const context = {msg: `You cannot delete this category as there are existing transactions tagged to it.`, categories}
             res.render("categories/summary",context);
         }

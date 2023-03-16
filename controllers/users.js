@@ -1,9 +1,11 @@
 const User = require("../models/User");
 const Category  = require("../models/Category");
 const dashboardCtrl = require("../controllers/dashboard");
+const Couple = require("../models/Couple");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const mongoose = require("mongoose");
+
 
 /**
  *
@@ -55,9 +57,10 @@ const register = async (req,res) => {
 }
 
 const login = async (req,res) => {
-    const {username,password} = req.body;
-    const user = await User.findOne({ username })
+
     try {
+        const {username,password} = req.body;
+        const user = await User.findOne({ username })
         if (user===null) {
             const context = {msg: "No user was found"}
             res.render("users/login", context);
@@ -68,9 +71,8 @@ const login = async (req,res) => {
                 req.session.userid = user._id;
                 req.session.user_permission = user.user_permission;
                 const user_permission = user.user_permission;
-                const categories = await Category.find().exec();
                 const [data,catArr,budgetArr,spentArr,deltaArr] = await dashboardCtrl.getData(req);
-                res.render("index", {user,username,user_permission,categories,data,catArr,budgetArr,spentArr,deltaArr,msg:""});
+                res.render("index", {user,username,user_permission,data,catArr,budgetArr,spentArr,deltaArr,msg:""});
             } else {
                 const context = { msg: "Password is wrong" };
                 res.render("users/login", context);
@@ -161,6 +163,7 @@ const updateProfile = async (req,res) => {
         const user_id = req.session.userid;
         let user = await User.findById(user_id).exec();
         let newPassword;
+
         if (req.body.new_password && req.body.current_password) {
             const isPasswordMatch = await bcrypt.compare(req.body.current_password, user.password);
             if (isPasswordMatch) {
@@ -174,6 +177,7 @@ const updateProfile = async (req,res) => {
         } else {
            newPassword = user.password;
         }
+
         await User.findByIdAndUpdate(user_id, {
                 monthly_salary: req.body.monthly_salary,
                 gender: req.body.gender,
@@ -184,6 +188,43 @@ const updateProfile = async (req,res) => {
             },
             {new:true})
             .exec();
+        //experimental from here
+        const userMatch = await User.findOne({
+            username: req.body.partner_username,
+            token: req.body.token
+        }).exec(); //find a user with partner username and token
+        if (userMatch) { //if search is successful
+            if (userMatch.couple_id) { //check if the potential partner has a couple id 
+                await User.findByIdAndUpdate(user_id, {
+                    couple_id: userMatch.couple_id
+                },
+                {new:true})
+                .exec();
+            } else {
+            const coupleGroup = await Couple.create({status: 0});
+            await Promise.all([
+                User.findByIdAndUpdate(user_id, {
+                    couple_id: coupleGroup._id
+                },
+                { new: true })
+                .exec(),
+
+                User.findByIdAndUpdate(userMatch._id, {
+                    couple_id: coupleGroup._id
+                }, 
+                {new:true})
+                .exec()
+                ])
+            }
+        } else {
+            const coupleGroup = await Couple.create({ status: 0 });
+            await User.findByIdAndUpdate(user_id, {
+                couple_id: coupleGroup._id
+            }, {new:true})
+            .exec();
+        }
+        
+
         const [data,catArr,budgetArr,spentArr,deltaArr] = await dashboardCtrl.getData(req);
         user = await User.findById(user_id).exec();
         res.render('index', {

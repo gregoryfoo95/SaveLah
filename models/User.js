@@ -75,6 +75,11 @@ const userSchema = new Schema(
 
     token: {
       type: String
+    },
+
+    couple_id: {
+      type: Schema.Types.ObjectId,
+      ref: "Couple"
     }
   },
 
