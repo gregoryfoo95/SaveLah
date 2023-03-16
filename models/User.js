@@ -67,6 +67,14 @@ const userSchema = new Schema(
     user_permission: {
       type: String,
       required: true,
+    },
+
+    partner_username: {
+      type: String,
+    },
+
+    token: {
+      type: String
     }
   },
 

@@ -146,6 +146,34 @@ const isAdmin = async (req,res,next) => {
     }
 }
 
+const profilePage = async (req,res) => {
+    const user_id = req.session.userid;
+    const user = await User.findById(user_id).exec();
+    const context = {
+        msg: "",
+        user: user,
+    };
+    res.render("users/profile",context);
+}
+
+const updateProfile = async (req,res) => {
+    try {
+        const user_id = req.session.userid;
+        const user = await User.findById(user_id).exec();
+        const context = {
+            msg:"You have updated your profile.",
+            user,
+        }
+        res.render("/users/profile", context);
+    } catch (error) {
+        if (error instanceof mongoose.Error.ValidationError) {
+            const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
+            res.status(400).send(`Validation Error: ${errorMessage}`);
+        } else {
+            res.status(500).send('Internal Server Error');
+        }
+    }
+}
 module.exports = {
     loginPage,
     registerPage,
@@ -154,4 +182,6 @@ module.exports = {
     logout,
     isAdmin,
     isAuth,
+    profilePage,
+    updateProfile
 };

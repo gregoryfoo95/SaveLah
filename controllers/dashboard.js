@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const Category = require("../models/Category");
 const Transaction = require("../models/Transaction");
+const mongoose = require("mongoose");
 /**
  *
  * @param {import("express").Request} req
@@ -15,21 +16,30 @@ const home = async (req, res) => {
 };
 
 const dashboard = async (req, res) => {
-    const user_id = req.session.userid;
-    const user = await User.findById(user_id);
-    const username = user.username;
-    const user_permission = user.user_permission;
-    const [data,catArr,budgetArr,spentArr,deltaArr] = await getData(req);
-    res.render('index', {
-        username: username,
-        user_permission: user_permission,
-        data: data,
-        catArr: catArr,
-        budgetArr: budgetArr,
-        spentArr: spentArr,
-        deltaArr: deltaArr,
-        msg:"",
-    });
+    try {
+        const user_id = req.session.userid;
+        const user = await User.findById(user_id).exec();
+        const username = user.username;
+        const user_permission = user.user_permission;
+        const [data,catArr,budgetArr,spentArr,deltaArr] = await getData(req);
+        res.render('index', {
+            username: username,
+            user_permission: user_permission,
+            data: data,
+            catArr: catArr,
+            budgetArr: budgetArr,
+            spentArr: spentArr,
+            deltaArr: deltaArr,
+            msg:"",
+        })
+    } catch (error) {
+        if (error instanceof mongoose.Error.ValidationError) {
+                const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
+                res.status(400).send(`Validation Error: ${errorMessage}`);
+            } else {
+                res.status(500).send('Internal Server Error');
+            }
+    }
 };
 
 const getData = async (req) => {
