@@ -19,7 +19,7 @@ const dashboard = async (req, res) => {
     try {
         const user_id = req.session.userid;
         const user = await User.findById(user_id).exec();
-        const [data,catArr,budgetArr,spentArr,deltaArr] = await getData(req);
+        const [data,catArr,budgetArr,spentArr,deltaArr] = await getData(req,res);
         res.render('index', {
             user: user,
             username: user.username,
@@ -77,7 +77,9 @@ const getData = async (req) => {
         deltaArr.push(transactionObj.delta);
         sum = 0;
     })
+    
     return [transactionArr,catArr,budgetArr,spentArr,deltaArr];
+        
 }
 
 
