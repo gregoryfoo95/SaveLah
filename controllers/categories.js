@@ -12,8 +12,7 @@ const mongoose = require("mongoose");
 const summary = async (req,res) => {
     try {
         const user_id = req.session.userid;
-        const pattern = req.query.category_name;
-        console.log(pattern);
+        const pattern = req.query.category_name_search;
         if (pattern) {
             const Re = new RegExp(pattern.toUpperCase());
             const categories = await Category.find({category_name: Re, user_id: user_id}).exec();
@@ -41,7 +40,7 @@ const create = async (req, res) => {
     const user_id = req.session.userid;
     try {
         let categories = await Category.find({user_id: user_id}).exec();
-        const category = await Category.find({category_name: category_name})
+        const category = await Category.find({category_name: category_name, user_id: user_id})
         if (category_name === "" || budget === "") {
             const context = {msg: "Category and Budget fields should not be left empty.", categories}
             res.render("categories/summary", context);
