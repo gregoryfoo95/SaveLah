@@ -19,12 +19,11 @@ const dashboard = async (req, res) => {
     try {
         const user_id = req.session.userid;
         const user = await User.findById(user_id).exec();
-        const username = user.username;
-        const user_permission = user.user_permission;
         const [data,catArr,budgetArr,spentArr,deltaArr] = await getData(req);
         res.render('index', {
-            username: username,
-            user_permission: user_permission,
+            user: user,
+            username: user.username,
+            user_permission: user.user_permission,
             data: data,
             catArr: catArr,
             budgetArr: budgetArr,

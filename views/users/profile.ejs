@@ -3,14 +3,14 @@
     <div class="container-fluid">
         <main role="main" class="col-md-5 col-lg-5 px-4 bg-dark text-white">
             <%=msg%>
-                <form action="/user/profile" method="post">
+                <form action="/user/profile/?_method=PUT" method="post">
                     <fieldset>
                         <legend>Profile</legend>
                         <label>Username: <input name="username" minlength="1" maxlength="30" value="<%= user.username%>" disabled/></label>
                         <br>
-                        <label>Current Password: <input type="password" name="password" minlength="8" /></label>
+                        <label>Current Password: <input type="password" name="current_password" minlength="8" /></label>
                         <br />
-                        <label>New Password: <input type="password" name="password" minlength="8" /></label>
+                        <label>New Password: <input type="password" name="new_password" minlength="8" /></label>
                         <br />
                         <label>Monthly Salary ($/mth): <input value="<%= user.monthly_salary %>" type="number" name="monthly_salary"
                                 placeholder="No negative amount please" step="0.01" min="0"

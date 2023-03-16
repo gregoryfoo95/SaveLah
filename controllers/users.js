@@ -70,7 +70,7 @@ const login = async (req,res) => {
                 const user_permission = user.user_permission;
                 const categories = await Category.find().exec();
                 const [data,catArr,budgetArr,spentArr,deltaArr] = await dashboardCtrl.getData(req);
-                res.render("index", {username,user_permission,categories,data,catArr,budgetArr,spentArr,deltaArr,msg:""});
+                res.render("index", {user,username,user_permission,categories,data,catArr,budgetArr,spentArr,deltaArr,msg:""});
             } else {
                 const context = { msg: "Password is wrong" };
                 res.render("users/login", context);
@@ -159,12 +159,44 @@ const profilePage = async (req,res) => {
 const updateProfile = async (req,res) => {
     try {
         const user_id = req.session.userid;
-        const user = await User.findById(user_id).exec();
-        const context = {
-            msg:"You have updated your profile.",
-            user,
+        let user = await User.findById(user_id).exec();
+        let newPassword;
+        if (req.body.new_password && req.body.current_password) {
+            const isPasswordMatch = await bcrypt.compare(req.body.current_password, user.password);
+            if (isPasswordMatch) {
+                newPassword = await bcrypt.hash(req.body.new_password, saltRounds);
+                await User.findByIdAndUpdate(user_id, {
+                    password: newPassword,      
+                },
+                {new:true})
+                .exec();
+            }
+        } else {
+           newPassword = user.password;
         }
-        res.render("/users/profile", context);
+        await User.findByIdAndUpdate(user_id, {
+                monthly_salary: req.body.monthly_salary,
+                gender: req.body.gender,
+                dob: req.body.dob,
+                user_permission: req.body.user_permission,
+                partner_username: req.body.partner_username,
+                token: req.body.token,        
+            },
+            {new:true})
+            .exec();
+        const [data,catArr,budgetArr,spentArr,deltaArr] = await dashboardCtrl.getData(req);
+        user = await User.findById(user_id).exec();
+        res.render('index', {
+            user: user,
+            username: user.username,
+            user_permission: user.user_permission,
+            data: data,
+            catArr: catArr,
+            budgetArr: budgetArr,
+            spentArr: spentArr,
+            deltaArr: deltaArr,
+            msg:"You have updated your profile.",
+        })
     } catch (error) {
         if (error instanceof mongoose.Error.ValidationError) {
             const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
