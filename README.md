@@ -31,13 +31,13 @@ A development Trello-styled whiteboard for the planning phase can be found <a hr
 # **Wireframe Sketch & User Story**
 ## Wireframe Sketches
 ### _Initial Dashboard_
-<img src = "https://github.com/gregoryfoo95/SaveLah/blob/main/Planning/Initial%20Dashboard.png?raw=true" width="400" height="400" title="Initial Sketch">
+<img src = "https://github.com/gregoryfoo95/SaveLah/blob/main/Planning/Initial%20Dashboard.png?raw=true" width="600" height="600" title="Initial Sketch">
 
 ### _Initial User Form Example_
-<img src = "https://github.com/gregoryfoo95/SaveLah/blob/main/Planning/Form%20Example.png?raw=true" width="400" height="400" title="Initial User Form">
+<img src = "https://github.com/gregoryfoo95/SaveLah/blob/main/Planning/Form%20Example.png?raw=true" width="600" height="600" title="Initial User Form">
 
 ### _Current Dashboard_
-<img src = "https://github.com/gregoryfoo95/SaveLah/blob/main/Planning/Dashboard.png?raw=true" width="400" height="400" title="Initial User Form">
+<img src = "https://github.com/gregoryfoo95/SaveLah/blob/main/Planning/Dashboard.png?raw=true" width="800" height="400" title="Initial User Form">
 
 ## Users' Stories
 
@@ -67,7 +67,7 @@ A development Trello-styled whiteboard for the planning phase can be found <a hr
 ## **Model:**
 Using the Model-View-Controller approach, the model in this CRUD app exists in the form of a database. The database employed is MongoDB, which is NoSQL in nature. The Entity-Relationship-Diagram (ERD) is shown below for clarity.
 ### _Entity Relationship Diagram (ERD)_
-<img src = "https://github.com/gregoryfoo95/SaveLah/blob/main/Planning/Entity%20Relationship%20Diagram.png?raw=true" width="400" height="400" title="Initial User Form">
+<img src = "https://github.com/gregoryfoo95/SaveLah/blob/main/Planning/Entity%20Relationship%20Diagram.png?raw=true" width="600" height="600" title="Initial User Form">
 
 There are 3 major schemas in this model: (1) User, (2) Category and (3) Transaction. For **User**, it contains registration information of the user, in which _username_ and a hashed **(BCrypt)** _password_ would be utilised for subsequent login. It also contains a _user_permission_ field, for future development involving the use case of an Administrator/User segregation.  For **Category**, it has a referenced _user_id_ foreign key to allow its information to be populated during queries. A _category_name_ and _budget_ are also provided for the user to identify the type of category and corresponded budget he/she is willing to assign to it. For **Transaction**, it has a referenced _category_id_ foreign key to allow its information to be populated during queries. A _date_ and _amount_ are also provided for the user to fill up his/her transactions throughout his daily activities, which records the date and expenditure.
 
