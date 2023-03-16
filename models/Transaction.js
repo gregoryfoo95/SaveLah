@@ -19,7 +19,6 @@ const transactionSchema = new Schema(
         },
         message: props => `${props.value} is not a valid date format!`
       },
-      max: new Date()
     },
         
     amount: {

@@ -42,10 +42,14 @@ const register = async (req,res) => {
             return;
         } else if (user.length) {
             res.render("users/register", {msg: "Your username has been taken!"});
-        } else if (!user.monthly_salary) {
+            return;
+        } else if (req.body.monthly_salary === null || req.body.monthly_salary === "") {
             res.render("users/register", {msg: "Please key in your monthly salary."});
             return;
+        } else if (req.body.dob > new Date()) {
+            res.render("users/register", {msg: "Please key in a date before today."});
         }
+
     } catch(error) {
         if (error instanceof mongoose.Error.ValidationError) {
             const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');

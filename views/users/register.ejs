@@ -6,13 +6,13 @@
         <form action="/user/register" method="post">
             <fieldset>
                 <legend>Registration</legend>
-                <label>Username: <input name="username" minlength="1" maxlength="30"/></label>
+                <label>Username: <input name="username" minlength="1" maxlength="30"></label>
                 <br />
                 <label>Password: <input type="password" name="password" minlength="8"  /></label>
                 <br />
                 <label>Confirm Password: <input type="password" name="password2" minlength="8" /></label>
                 <br />
-                <label>Monthly Salary ($/mth): <input type="number" name="monthly_salary" placeholder="No negative amount please" step="0.01" min="0" pattern="^\s*$^[+]?([0-9]+(?:[\.][0-9]*)?|\.[0-9]+)$" /></label>
+                <label>Monthly Salary ($/mth): <input type="number" value="0" name="monthly_salary" placeholder="No negative amount please" step="0.01" min="0" pattern="^\s*$^[+]?([0-9]+(?:[\.][0-9]*)?|\.[0-9]+)$" /></label>
                 <br />
                 <label>Gender:</label>
                 <select name="gender">

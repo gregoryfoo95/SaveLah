@@ -4,19 +4,22 @@ const Joi = require('joi');
 
 const userSchema = new Schema(
   {
-    username: { 
-      type: String,
-      required: true,
-      unique: true,
-      validate: {
-        validator: function(value) {
+    username: {
+    type: String,
+    required: [true, 'Please provide a username'],
+    unique: true,
+    validate: {
+      validator: function(value) {
+        if (value) {
           const schema = Joi.string().alphanum().min(1).max(30).required();
           const { error } = schema.validate(value);
           return error ? false : true;
-        },
-        message: props => `${props.value} is not a valid username!`,
+        }
+        return true; // allow empty username
       },
+      message: props => `${props.value} is not a valid username!`,
     },
+  },
     password: { 
       type: String,
       required: true,
@@ -33,16 +36,23 @@ const userSchema = new Schema(
     
     monthly_salary: {
       type: Number,
-      required: true,
+      required: false,
+      default: 0,
       validate: {
         validator: function (value) {
-        const schema = Joi.number().min(0).required();
-        const { error } = schema.validate(value);
-          return error ? false : true;
+          if (value === null || value === undefined || value === '') {
+            return true;
+          }
+          if (isNaN(Number(value))) {
+            return false;
+          }
+          const schema = Joi.number().min(0)
+          const { error } = schema.validate(value);
+            return error ? false : true;
+          },
+          message: (props) =>
+            `${props.value} is not a valid salary amount. Must be greater than or equals to 0.`,
         },
-        message: (props) =>
-          `${props.value} is not a valid salary amount. Must be greater than or equals to 0.`,
-      },
     },
 
     gender: {
@@ -82,5 +92,6 @@ const userSchema = new Schema(
     timestamps: true,
   }
 );
+
 
 module.exports = mongoose.model("User", userSchema);
