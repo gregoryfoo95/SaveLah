@@ -53,6 +53,7 @@ A development Trello-styled whiteboard for the planning phase can be found <a hr
 | :-------- |:------------|:---------
 | User | to login/register/logout | Authentication (Security)/POST Request
 | User | to have a form to fill in registration/login details | Registration/Login Form (Security)/GET Request
+| User | to change registration information and change password | PUT Request with Password Hashing
 | User | to have an overview of all data through visualisations | Overview of Finances/GET Request
 | User | to access page with all budget categories | Overview of Categories/GET Request
 | User | to add/edit/delete budget categories | POST/PUT/DELETE Requests
@@ -984,7 +985,6 @@ Before the commencement of this app, the original impression of the difficulty i
 
 # **Future Works**
 
-- Profile Page for User to amend his registration information
 - Sign in with OAuth (Google, Facebook)
 - Unit Testing with Mocha and Chai
 - Link up with another user to form a Couple entity, joint account with shared categories
