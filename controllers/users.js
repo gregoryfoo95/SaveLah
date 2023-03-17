@@ -136,7 +136,7 @@ const isAuth = async (req, res, next) => {
 
 const isAdmin = async (req,res,next) => {
     try {
-    if (req.session.user_permission === "Admin") { //remember to add into other codes
+    if (req.session.user_permission === "Admin") { 
         return next();
     } else {
         const user = await User.findById(req.session.userid).exec();
