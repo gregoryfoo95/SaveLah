@@ -46,16 +46,20 @@ const register = async (req,res) => {
         } else if (req.body.monthly_salary === null || req.body.monthly_salary === "") {
             res.render("users/register", {msg: "Please key in your monthly salary."});
             return;
-        } else if (req.body.dob > new Date()) {
+        } else if (new Date(req.body.dob) > new Date()) {
             res.render("users/register", {msg: "Please key in a date before today."});
+            return;
         }
-
     } catch(error) {
         if (error instanceof mongoose.Error.ValidationError) {
             const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
             res.status(400).send(`Validation Error: ${errorMessage}`);
+        } else if (error.errors.dob) {
+            res.status(400).send("Validation Error: A future date was entered. Please enter a valid date.")
+            return;
         } else {
             res.status(500).send('Internal Server Error');
+            return;
         }
     }
 }
