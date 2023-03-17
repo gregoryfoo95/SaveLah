@@ -49,19 +49,20 @@ A development Trello-styled whiteboard for the planning phase can be found <a hr
 
 ## Users' Stories
 
-| As a ...  | I want ...  | Feature
-| :-------- |:------------|:---------
-| User | to login/register/logout | Authentication (Security)/POST Request
-| User | to have a form to fill in registration/login details | Registration/Login Form (Security)/GET Request
-| User | to change registration information and change password | PUT Request with Password Hashing
-| User | to have an overview of all data through visualisations | Overview of Finances/GET Request
-| User | to access page with all budget categories | Overview of Categories/GET Request
-| User | to add/edit/delete budget categories | POST/PUT/DELETE Requests
-| User | to access page with all transactions | Overview of Transactions/GET Request
-| User | to add/edit/delete transactions | POST/PUT/DELETE Requests
-| Developer | to have different authorisation rights for users | Authorisation
-| Developer | to have validation on View, Model and Controller | Input Validation to prevent noSQL/SQL Injections
-| Developer | to have unit testing with Mocha and Chai | Ease of Troubleshooting
+| As a ...  | I want ...  | Feature | Status
+| :-------- |:------------|:---------|:---------
+| User | to login/register/logout | Authentication (Security)/POST Request | Done
+| User | to have a form to fill in registration/login details | Registration/Login Form (Security)/GET Request | Done
+| User | to change registration information and change password | PUT Request with Password Hashing | Done
+| User | to have an overview of all data through visualisations | Overview of Finances/GET Request | Done
+| User | to access page with all budget categories | Overview of Categories/GET Request | Done
+| User | to add/edit/delete budget categories | POST/PUT/DELETE Requests | Done
+| User | to access page with all transactions | Overview of Transactions/GET Request | Done
+| User | to add/edit/delete transactions | POST/PUT/DELETE Requests | Done
+| User | to link up with a partner for joint savings management | Database relationship and Query | Done
+| Developer | to have different authorisation rights for users | Authorisation | Done
+| Developer | to have validation on View, Model and Controller | Input Validation to prevent noSQL/SQL Injections | Done
+| Developer | to have unit testing with Mocha and Chai | Ease of Troubleshooting | Not completed
 
 # **Development Timeline and Approach**
 
@@ -137,6 +138,7 @@ const categorySchema = new Schema(
 );
 
 module.exports = mongoose.model("Category", categorySchema);
+
 ```
 
 ### _Transaction Schema_
@@ -162,7 +164,6 @@ const transactionSchema = new Schema(
         },
         message: props => `${props.value} is not a valid date format!`
       },
-      max: new Date()
     },
         
     amount: {
@@ -196,15 +197,16 @@ const Joi = require('joi');
 
 const userSchema = new Schema(
   {
-    username: { 
+    username: {
       type: String,
-      required: true,
+      minlength: 1,
+      maxlength:30,
       unique: true,
       validate: {
         validator: function(value) {
-          const schema = Joi.string().alphanum().min(1).max(30).required();
-          const { error } = schema.validate(value);
-          return error ? false : true;
+            const schema = Joi.string().min(1).max(30).required();
+            const { error } = schema.validate(value);
+            return error ? false : true;
         },
         message: props => `${props.value} is not a valid username!`,
       },
@@ -225,16 +227,23 @@ const userSchema = new Schema(
     
     monthly_salary: {
       type: Number,
-      required: true,
+      required: false,
+      default: 0,
       validate: {
         validator: function (value) {
-        const schema = Joi.number().min(0).required();
-        const { error } = schema.validate(value);
-          return error ? false : true;
+          if (value === null || value === undefined || value === '') {
+            return true;
+          }
+          if (isNaN(Number(value))) {
+            return false;
+          }
+          const schema = Joi.number().min(0)
+          const { error } = schema.validate(value);
+            return error ? false : true;
+          },
+          message: (props) =>
+            `${props.value} is not a valid salary amount. Must be greater than or equals to 0.`,
         },
-        message: (props) =>
-          `${props.value} is not a valid salary amount. Must be greater than or equals to 0.`,
-      },
     },
 
     gender: {
@@ -259,6 +268,19 @@ const userSchema = new Schema(
     user_permission: {
       type: String,
       required: true,
+    },
+
+    partner_username: {
+      type: String,
+    },
+
+    token: {
+      type: String
+    },
+
+    couple_id: {
+      type: Schema.Types.ObjectId,
+      ref: "Couple"
     }
   },
 
@@ -267,7 +289,40 @@ const userSchema = new Schema(
   }
 );
 
+
 module.exports = mongoose.model("User", userSchema);
+
+```
+
+### _Couple Schema_
+```js
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+const Joi = require('joi');
+
+const coupleSchema = new Schema(
+    {
+        status: {
+        type: Number,
+        validate: {
+            validator: function (value) {
+                const schema = Joi.number().min(0).max(1).required();
+                const { error } = schema.validate(value);
+                return error ? false : true;
+            },
+            message: (props) =>
+                `${props.value} is not a valid couple status. Must be either 0 or 1.`,
+            },
+        },
+    },
+  
+    {
+        timestamps: true,
+    }
+);
+
+module.exports = mongoose.model("Couple", coupleSchema);
+
 ```
 
 ## **View:**
@@ -286,6 +341,7 @@ The **View** is primarily built using EJS view engines to allow page routing dir
 |          | sidebar| Persistent Display of Sidebar for all pages | NA
 | views/users | register | Registration Form | /user/register/new
 |             | login    | Login Form | /user/login/new
+|             | profile  | Profile Page | /profile/:id/edit
 | views/categories | summary | Summary of all categories | /categories/all
 |                  | edit | Edit Form of selected category | /categories/:id/edit
 | views/transactions| summary | Summary of all transactions | /transactions/all
@@ -301,19 +357,21 @@ As for this project, the server is validated for user requests through the usage
 
 | Controllers|Functionality   
 | :-------|:-------------------|
-| users | _loginPage, registerPage, register, login, logout, isAuth, isAdmin_
-| dashboard | _home, dashboard, getData_
+| users | _loginPage, registerPage, register, login, logout, isAuth, isAdmin, profilePage, updateProfile_
+| dashboard | _home, dashboard, getData, fetchData_
 | categories | _summary, create, editForm, edit, del_
 | transactions | _summary, create, editForm, edit, del_
+
+**A cool feature added as the icing on the cake for my project would be the linking of two users with two information: (1) username and (2) token. This allows both users to have a joint account for shared budget management and is suitable for couples looking to plan for their wedding/renovation journey like myself!**
 
 <details><summary>users</summary>
 
 ```js
 const User = require("../models/User");
-const Category  = require("../models/Category");
 const dashboardCtrl = require("../controllers/dashboard");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
+const Couple = require("../models/Couple");
 const mongoose = require("mongoose");
 
 /**
@@ -336,8 +394,8 @@ const registerPage = async (req,res) => {
 
 const register = async (req,res) => {
     try {
-        const username = await User.find({username: req.body.username}).exec();
-        if (req.body.password === req.body.password2 && !username.length) {
+        const user = await User.find({username: req.body.username}).exec();
+        if (req.body.password === req.body.password2 && !user.length && req.body.username.length && req.body.monthly_salary) {
             bcrypt.hash(req.body.password, saltRounds, async (err,hash) => {
             await User.create(
                 { username: req.body.username,
@@ -352,23 +410,35 @@ const register = async (req,res) => {
         } else if (req.body.password !== req.body.password2) {
             res.render("users/register", {msg: "Your passwords do not match."});
             return;
-        } else if (username.length) {
+        } else if (user.length) {
             res.render("users/register", {msg: "Your username has been taken!"});
+            return;
+        } else if (req.body.monthly_salary === null || req.body.monthly_salary === "") {
+            res.render("users/register", {msg: "Please key in your monthly salary."});
+            return;
+        } else if (new Date(req.body.dob) > new Date()) {
+            res.render("users/register", {msg: "Please key in a date before today."});
+            return;
+        } else if (!req.body.username.length) {
+            res.render("users/register", {msg: "Please do not leave the username field empty."});
+            return;
         }
     } catch(error) {
         if (error instanceof mongoose.Error.ValidationError) {
             const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
             res.status(400).send(`Validation Error: ${errorMessage}`);
+            return;
         } else {
             res.status(500).send('Internal Server Error');
+            return;
         }
     }
 }
 
 const login = async (req,res) => {
-    const {username,password} = req.body;
-    const user = await User.findOne({ username })
     try {
+        const {username,password} = req.body;
+        const user = await User.findOne({ username });
         if (user===null) {
             const context = {msg: "No user was found"}
             res.render("users/login", context);
@@ -379,9 +449,8 @@ const login = async (req,res) => {
                 req.session.userid = user._id;
                 req.session.user_permission = user.user_permission;
                 const user_permission = user.user_permission;
-                const categories = await Category.find().exec();
                 const [data,catArr,budgetArr,spentArr,deltaArr] = await dashboardCtrl.getData(req);
-                res.render("index", {username,user_permission,categories,data,catArr,budgetArr,spentArr,deltaArr,msg:""});
+                res.render("index", {user,username,user_permission,data,catArr,budgetArr,spentArr,deltaArr,msg:""});
             } else {
                 const context = { msg: "Password is wrong" };
                 res.render("users/login", context);
@@ -437,7 +506,7 @@ const isAuth = async (req, res, next) => {
 
 const isAdmin = async (req,res,next) => {
     try {
-    if (req.session.user_permission === "Admin") { //remember to add into other codes
+    if (req.session.user_permission === "Admin") { 
         return next();
     } else {
         const user = await User.findById(req.session.userid).exec();
@@ -457,6 +526,104 @@ const isAdmin = async (req,res,next) => {
     }
 }
 
+const profilePage = async (req,res) => {
+    const user_id = req.session.userid;
+    const user = await User.findById(user_id).exec();
+    const context = {
+        msg: "",
+        user: user,
+    };
+    res.render("users/profile",context);
+}
+
+const updateProfile = async (req,res) => {
+    try {
+        const user_id = req.session.userid;
+        let user = await User.findById(user_id).exec();
+        let newPassword;
+        if (req.body.new_password && req.body.current_password) {
+            const isPasswordMatch = await bcrypt.compare(req.body.current_password, user.password);
+            if (isPasswordMatch) {
+                newPassword = await bcrypt.hash(req.body.new_password, saltRounds);
+                await User.findByIdAndUpdate(user_id, {
+                    password: newPassword,      
+                },
+                {new:true})
+                .exec();
+            }
+        } else {
+           newPassword = user.password;
+        }
+        await User.findByIdAndUpdate(user_id, {
+                monthly_salary: req.body.monthly_salary,
+                gender: req.body.gender,
+                dob: req.body.dob,
+                user_permission: req.body.user_permission,
+                partner_username: req.body.partner_username,
+                token: req.body.token,        
+            },
+            {new:true})
+            .exec();
+            
+        //experimental from here
+        const userMatch = await User.findOne({
+            username: req.body.partner_username,
+            token: req.body.token
+        }).exec(); //find a user with partner username and token
+        if (userMatch) { //if search is successful
+            if (userMatch.couple_id) { //check if the potential partner has a couple id 
+                await User.findByIdAndUpdate(user_id, {
+                    couple_id: userMatch.couple_id
+                },
+                {new:true})
+                .exec();
+            } else {
+            const coupleGroup = await Couple.create({status: 0});
+            await Promise.all([
+                User.findByIdAndUpdate(user_id, {
+                    couple_id: coupleGroup._id
+                },
+                { new: true })
+                .exec(),
+
+                User.findByIdAndUpdate(userMatch._id, {
+                    couple_id: coupleGroup._id
+                }, 
+                {new:true})
+                .exec()
+                ])
+            }
+        } else {
+            const coupleGroup = await Couple.create({ status: 0 });
+            await User.findByIdAndUpdate(user_id, {
+                couple_id: coupleGroup._id
+            }, {new:true})
+            .exec();
+        }
+
+
+        const [data,catArr,budgetArr,spentArr,deltaArr] = await dashboardCtrl.getData(req);
+        user = await User.findById(user_id).exec();
+        res.render('index', {
+            user: user,
+            username: user.username,
+            user_permission: user.user_permission,
+            data: data,
+            catArr: catArr,
+            budgetArr: budgetArr,
+            spentArr: spentArr,
+            deltaArr: deltaArr,
+            msg:"You have updated your profile.",
+        })
+    } catch (error) {
+        if (error instanceof mongoose.Error.ValidationError) {
+            const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
+            res.status(400).send(`Validation Error: ${errorMessage}`);
+        } else {
+            res.status(500).send('Internal Server Error');
+        }
+    }
+}
 module.exports = {
     loginPage,
     registerPage,
@@ -465,6 +632,8 @@ module.exports = {
     logout,
     isAdmin,
     isAuth,
+    profilePage,
+    updateProfile
 };
 ```
 </details>
@@ -475,6 +644,7 @@ module.exports = {
 const User = require("../models/User");
 const Category = require("../models/Category");
 const Transaction = require("../models/Transaction");
+const mongoose = require("mongoose");
 /**
  *
  * @param {import("express").Request} req
@@ -489,21 +659,48 @@ const home = async (req, res) => {
 };
 
 const dashboard = async (req, res) => {
-    const user_id = req.session.userid;
-    const user = await User.findById(user_id);
-    const username = user.username;
-    const user_permission = user.user_permission;
-    const [data,catArr,budgetArr,spentArr,deltaArr] = await getData(req);
-    res.render('index', {
-        username: username,
-        user_permission: user_permission,
-        data: data,
-        catArr: catArr,
-        budgetArr: budgetArr,
-        spentArr: spentArr,
-        deltaArr: deltaArr,
-        msg:"",
-    });
+    try {
+        const user_id = req.session.userid;
+        const user = await User.findById(user_id).exec();
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
+
+        const [data,catArr,budgetArr,spentArr,deltaArr] = await getData(req,res);
+        res.render('index', {
+            user: user,
+            username: user.username,
+            partner_username: partnerUser.username,
+            user_permission: user.user_permission,
+            data: data,
+            catArr: catArr,
+            budgetArr: budgetArr,
+            spentArr: spentArr,
+            deltaArr: deltaArr,
+            msg:"",
+        })
+    } catch (error) {
+        if (error instanceof mongoose.Error.ValidationError) {
+                const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
+                res.status(400).send(`Validation Error: ${errorMessage}`);
+            } else {
+                res.status(500).send('Internal Server Error');
+            }
+    }
 };
 
 const getData = async (req) => {
@@ -514,20 +711,63 @@ const getData = async (req) => {
     let deltaArr=[];
     let sum = 0;
     const user_id = req.session.userid;
-    const categories = await Category.find({user_id:user_id}).exec();
+    const user = await User.findById(user_id).exec();
+    let partnerUser;
+    if (user.couple_id) {
+        const couple = await User.find({
+        couple_id: user.couple_id
+        }).exec();
+        if (couple.length === 2) {
+            if (couple[0]._id.equals(user_id)) {
+                partnerUser = await User.findById(couple[1]._id).exec();
+            } else {
+                partnerUser = await User.findById(couple[0]._id).exec();
+            }
+        } else {
+            partnerUser = "";
+        }
+    } else {
+        partnerUser = "";
+    }
+
+    const categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
     const transactions = await Transaction
             .find()
             .populate(
                 {path: "category_id",
-                match: { user_id: user_id }
+                match: { user_id: [user_id, partnerUser._id] }
             })
             .exec();
+
     categories.forEach((category) => {
         const category_name = category.category_name;
         const budget = category.budget;
         transactionArr.push({category_name: category_name,
                              budget: budget});
     })
+
+    /* A JavaScript Set is a collection of unique values.
+    Each value can only occur once in a Set.
+    A Set can hold any value of any data type. */
+    let newTransactionArr = [];
+    if (partnerUser) {
+        let budgetSum = 0;
+        const uniqueCatName = [... new Set(transactionArr.map(item => item.category_name))];
+        for (let i = 0; i < uniqueCatName.length; i++) {
+            for (let j = 0; j < transactionArr.length; j++) {
+                if (transactionArr[j].category_name === uniqueCatName[i]) {
+                    budgetSum += transactionArr[j].budget;
+                }
+            }
+            const obj = {
+                category_name: uniqueCatName[i],
+                budget: budgetSum
+            }
+            newTransactionArr.push(obj);
+            budgetSum = 0;
+        }
+        transactionArr = newTransactionArr;
+    }
     transactionArr.forEach((transactionObj) => {
         transactions.forEach((transaction) => {
             if (transaction.category_id && transaction.category_id.category_name === transactionObj.category_name ) {
@@ -542,14 +782,22 @@ const getData = async (req) => {
         deltaArr.push(transactionObj.delta);
         sum = 0;
     })
+    
     return [transactionArr,catArr,budgetArr,spentArr,deltaArr];
+        
 }
 
+const fetchData = async (req,res) => {
+    const data = await getData(req);
+    res.send(data);
+
+}
 
 module.exports = {
     home,
     dashboard,
     getData,
+    fetchData
 };
 ```
 </details>
@@ -559,6 +807,7 @@ module.exports = {
 ```js
 const Category = require("../models/Category");
 const Transaction = require("../models/Transaction");
+const User = require("../models/User");
 const mongoose = require("mongoose");
 /**
  *
@@ -571,14 +820,36 @@ const mongoose = require("mongoose");
 const summary = async (req,res) => {
     try {
         const user_id = req.session.userid;
-        const pattern = req.query.category_name;
-        console.log(pattern);
+        const user = await User.findById(user_id).exec();
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
+        const pattern = req.query.category_name_search;
         if (pattern) {
             const Re = new RegExp(pattern.toUpperCase());
-            const categories = await Category.find({category_name: Re, user_id: user_id}).exec();
-            res.render("categories/summary", {msg: "", categories});
+            const categories = await Category.find({category_name: Re, user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
+            const context = {
+                msg: "",
+                categories
+            };
+            res.render("categories/summary", context);
         } else {
-            const categories = await Category.find({user_id: user_id}).exec();
+            const categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
             const context = {
                 msg: "",
                 categories
@@ -596,11 +867,30 @@ const summary = async (req,res) => {
 }
 
 const create = async (req, res) => {
-    const {category_name, budget} = req.body;
-    const user_id = req.session.userid;
     try {
-        let categories = await Category.find().exec();
-        const category = await Category.find({category_name: category_name})
+        const {category_name, budget} = req.body;
+        const user_id = req.session.userid;
+        const user = await User.findById(user_id).exec();
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+  
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
+        let categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
+        const category = await Category.find({category_name: category_name, user_id: [user_id, partnerUser._id]})
         if (category_name === "" || budget === "") {
             const context = {msg: "Category and Budget fields should not be left empty.", categories}
             res.render("categories/summary", context);
@@ -621,7 +911,7 @@ const create = async (req, res) => {
                 user_id: req.session.userid,
             }
         );
-        categories = await Category.find({user_id: user_id}).exec();    
+        categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();    
         const msg = `You have added ${req.body.category_name}.`;    
         res.render("categories/summary", {msg,categories});
     } catch (error) {
@@ -638,8 +928,27 @@ const editForm = async (req,res) => {
     try {
         const id = req.params.id;
         const user_id = req.session.userid;
+        const user = await User.findById(user_id).exec();
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
         const category = await Category.findById(id).exec();
-        const categories = await Category.find({user_id: user_id}).exec();
+        const categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
         const context = {msg: "", category, categories};
         res.render("categories/edit", context);
     } catch (error) {
@@ -656,9 +965,38 @@ const edit = async (req,res) => {
     try {
         const id = req.params.id;
         const user_id = req.session.userid;
-        await Category.findByIdAndUpdate(id, req.body, {new:true}).exec();
-        const categories = await Category.find({user_id:user_id}).exec();
-        const context = {msg: `You have updated ${req.body.category_name}.`, categories}
+        const user = await User.findById(user_id).exec();
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
+        let categoryPresent = await Category.find({
+            user_id: [user_id, partnerUser._id],
+            category_name: req.body.category_name.toUpperCase(),
+        }).exec()
+        let msg;
+        if (!categoryPresent.length) {
+            await Category.findByIdAndUpdate(id, {category_name: req.body.category_name.toUpperCase(), budget: req.body.budget}, {new:true}).exec();
+            msg = `You have updated ${req.body.category_name}.`;
+        } else {
+            msg = `There is an existing category with the same name.`;
+        }
+        const categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
+        const context = {msg: msg, categories}
         res.render("categories/summary",context)
     } catch (error) {
         if (error instanceof mongoose.Error.ValidationError) {
@@ -674,16 +1012,35 @@ const del = async (req,res) => {
     try {
         const id = req.params.id;
         const user_id = req.session.userid;
+        const user = await User.findById(user_id).exec();
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
         const transaction = await Transaction.find({category_id: id}).exec();
         if (!transaction.length) {
             const category = await Category.findById(id).exec();
             const msg = `You have deleted ${category.category_name}.`;
             await Category.findByIdAndDelete(id).exec();
-            const categories = await Category.find({user_id: user_id}).exec();
+            const categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
             const context = {msg, categories}
             res.render("categories/summary",context);
         } else {
-            const categories = await Category.find({user_id: user_id}).exec();
+            const categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
             const context = {msg: `You cannot delete this category as there are existing transactions tagged to it.`, categories}
             res.render("categories/summary",context);
         }
@@ -714,6 +1071,7 @@ module.exports = {
 ```js
 const Transaction = require("../models/Transaction");
 const Category = require("../models/Category");
+const User = require("../models/User");
 const mongoose = require("mongoose");
 /**
  *
@@ -726,10 +1084,29 @@ const mongoose = require("mongoose");
 const summary = async (req,res) => {
     try {
         const user_id = req.session.userid;
-        const pattern = req.query.category_name;
+        const pattern = req.query.category_name_search;
+        const user = await User.findById(user_id).exec();
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
         if (pattern) {
             const Re = new RegExp(pattern.toUpperCase());
-            const categories = await Category.find({ user_id: user_id}).exec();
+            const categories = await Category.find({category_name: Re, user_id: [user_id,partnerUser._id]}).populate("user_id").exec();
             const transactions = await Transaction
             .find()
             .populate(
@@ -737,6 +1114,10 @@ const summary = async (req,res) => {
                  match: { 
                     user_id: user_id,
                     category_name: Re,
+                },
+                populate: {
+                    path: "user_id",
+                    select: "username"
                 }
             })
             .exec();
@@ -749,14 +1130,19 @@ const summary = async (req,res) => {
             };
             res.render("transactions/summary", context);
         } else {
-            const categories = await Category.find({user_id:user_id}).exec();
+            const categories = await Category.find({user_id:[user_id,partnerUser._id]}).populate("user_id").exec();
             const transactions = await Transaction
             .find()
-            .populate(
-                {path: "category_id",
-                match: { user_id: user_id }
+            .populate({
+                path: "category_id",
+                match: { user_id: [user_id,partnerUser._id] },
+                populate: {
+                    path: "user_id",
+                    select: "username"
+                }
             })
             .exec();
+            console.log(transactions);
             const context = {
                 msg: "",
                 transactions: transactions.filter((transaction) => {
@@ -777,23 +1163,79 @@ const summary = async (req,res) => {
 
 const create = async (req, res) => {
     try {
+        const { date, amount } = req.body;
         const user_id = req.session.userid;
-        const categories = await Category.find({user_id: user_id}).exec()
+        const user = await User.findById(user_id).exec();
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
+        const categories = await Category.find({user_id: [user_id,partnerUser._id]}).populate("user_id").exec()
+        let transactions = await Transaction
+            .find()
+            .populate({
+                path: "category_id",
+                match: { user_id: [user_id,partnerUser._id] },
+                populate: {
+                    path: "user_id",
+                    select: "username"
+                }
+            })
+            .exec();
+        if (amount === "") {
+            const context = {
+                msg: "Amount fields should not be left empty.", 
+                categories, 
+                transactions: transactions.filter((transaction) => {
+                return transaction.category_id !== null;
+                }),
+            }
+            res.render("transactions/summary", context);
+            return;
+        } else if (amount < 0) {
+            const context = {
+                msg: "Amount fields should not be negative.", 
+                categories, 
+                transactions: transactions.filter((transaction) => {
+                return transaction.category_id !== null;
+                }),
+            }
+            res.render("transactions/summary", context);
+            return;
+        }
         await Transaction.create(
             {
                 category_id: req.body.category_id,
                 user_id: user_id,
-                date: req.body.date,
-                amount: req.body.amount,
+                date: date,
+                amount: amount,
             });
-        const transactions = await Transaction
+        transactions = await Transaction
             .find()
-            .populate(
-                {path: "category_id",
-                match: { user_id: user_id }
+            .populate({
+                path: "category_id",
+                match: { user_id: [user_id,partnerUser._id] },
+                populate: {
+                    path: "user_id",
+                    select: "username"
+                }
             })
             .exec();
-        const msg = `You have added a transaction`;
+        const msg = `You have added a transaction.`;
         res.render("transactions/summary", {
             msg, 
             transactions: transactions.filter((transaction) => {
@@ -814,34 +1256,76 @@ const create = async (req, res) => {
 const editForm = async (req,res) => {
     try {
         const user_id = req.session.userid;
+         const user = await User.findById(user_id).exec();
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
         const transaction_id = req.params.id;
         const transaction = await Transaction.findById(transaction_id).populate("category_id").exec();
-        const categories = await Category.find({user_id: user_id}).exec();
+        const categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
         const context = {msg: "", transaction, categories};
         res.render("transactions/edit", context);
-} catch (error) {
-    if (error instanceof mongoose.Error.ValidationError) {
-            const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
-            res.status(400).send(`Validation Error: ${errorMessage}`);
-        } else {
-            res.status(500).send('Internal Server Error');
-        }
-}
+    } catch (error) {
+        if (error instanceof mongoose.Error.ValidationError) {
+                const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
+                res.status(400).send(`Validation Error: ${errorMessage}`);
+            } else {
+                res.status(500).send('Internal Server Error');
+            }
+    }
 }
 
 const edit = async (req,res) => {
     try {
         const user_id = req.session.userid;
+        const user = await User.findById(user_id).exec();
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
         const id = req.params.id;
         const transaction = await Transaction.findByIdAndUpdate(id, req.body, {new:true}).exec();
         const transactions = await Transaction
             .find()
-            .populate(
-                {path: "category_id",
-                match: { user_id: user_id }
+            .populate({
+                path: "category_id",
+                match: { user_id: [user_id,partnerUser._id] },
+                populate: {
+                    path: "user_id",
+                    select: "username"
+                }
             })
             .exec();
-        const categories = await Category.find({user_id: user_id}).exec();
+        const categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
         const context = {
             msg: `You have updated the transaction.`,
             transactions: transactions.filter((transaction) => {
@@ -864,13 +1348,36 @@ const del = async (req,res) => {
     const id = req.params.id;
     try {
         const user_id = req.session.userid;
+        const user = await User.findById(user_id).exec();
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
         await Transaction.findByIdAndDelete(id).exec();
-        const categories = await Category.find({user_id: user_id}).exec();
+        const categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
         const transactions = await Transaction
             .find()
-            .populate(
-                {path: "category_id",
-                match: { user_id: user_id }
+            .populate({
+                path: "category_id",
+                match: { user_id: [user_id,partnerUser._id] },
+                populate: {
+                    path: "user_id",
+                    select: "username"
+                }
             })
             .exec();
         const context = {
@@ -922,6 +1429,8 @@ router.get("/register/new", usersCtrl.registerPage);
 router.post("/register", usersCtrl.register);
 router.post("/login", usersCtrl.login);
 router.delete("/logout", usersCtrl.logout);
+router.get("/profile/:id/edit", usersCtrl.isAuth, usersCtrl.profilePage)
+router.put("/profile", usersCtrl.isAuth, usersCtrl.updateProfile)
 module.exports = router;
 ```
 </details>
@@ -936,7 +1445,7 @@ const userCtrl = require("../controllers/users");
 
 router.get('/', dashboardCtrl.home);
 router.get('/dashboard', userCtrl.isAuth, dashboardCtrl.dashboard);
-router.get('/api/data', userCtrl.isAuth, userCtrl.isAdmin, dashboardCtrl.getData);
+router.get('/api/data', userCtrl.isAuth, userCtrl.isAdmin, dashboardCtrl.fetchData);
 module.exports = router;
 
 ```
@@ -950,14 +1459,15 @@ var router = express.Router();
 const categoryCtrl = require("../controllers/categories");
 const userCtrl = require("../controllers/users");
 
+
 router.get("/all", userCtrl.isAuth, userCtrl.isAdmin, categoryCtrl.summary);
-router.post("/", userCtrl.isAuth, userCtrl.isAdmin, categoryCtrl.create);
+router.post("/all", userCtrl.isAuth, userCtrl.isAdmin, categoryCtrl.create);
 router.get("/:id/edit", userCtrl.isAuth, userCtrl.isAdmin, categoryCtrl.editForm);
 router.put("/:id", userCtrl.isAuth, userCtrl.isAdmin, categoryCtrl.edit);
 router.delete("/:id", userCtrl.isAuth, userCtrl.isAdmin, categoryCtrl.del);
-
+/*Cater for empty search after deletion of category*/
+router.get("/:id", userCtrl.isAuth, userCtrl.isAdmin, categoryCtrl.summary)
 module.exports = router;
-
 
 ```
 </details>
@@ -971,23 +1481,32 @@ const transactionCtrl = require("../controllers/transactions");
 const userCtrl = require("../controllers/users");
 
 router.get("/all", userCtrl.isAuth, userCtrl.isAdmin, transactionCtrl.summary);
-router.post("/", userCtrl.isAuth, userCtrl.isAdmin, transactionCtrl.create);
+router.post("/all", userCtrl.isAuth, userCtrl.isAdmin, transactionCtrl.create);
 router.get("/:id/edit", userCtrl.isAuth, userCtrl.isAdmin, transactionCtrl.editForm);
 router.put("/:id", userCtrl.isAuth, userCtrl.isAdmin, transactionCtrl.edit);
 router.delete("/:id", userCtrl.isAuth, userCtrl.isAdmin, transactionCtrl.del);
-
+/*Cater for empty search after deletion of transaction*/
+router.get("/:id", userCtrl.isAuth, userCtrl.isAdmin, transactionCtrl.summary)
 module.exports = router;
+
 ```
 </details>
 
+
 # **Key Takeaways**
 Before the commencement of this app, the original impression of the difficulty in developing a CRUD app was classified as "manageable" by my own standards. That changed when there were many more considerations besides just developing the CRUD features! These considerations include but not limited to: (1) Database Design, essentially ERD! and (2) Validation for View/Model/Controller to prevent NoSQL/SQL injections by hackers. My biggest key takeaway could be succintly mentioned in a sentence: **_Always do your due diligence to plan your Model/View/Controller before coding away!_**
+
+Other notable technical takeaways are as shown:
+- Methods of validation not limiting to Regex patterns, HTML input attributes for Front-end & Joi, Mongoose Validation for Back-end (Server and Database)
+- Theory on Javascript Promises
+- Database Design and utilizing referencing concept to expand to SQL database in the future
+- Difference between Authorisation and Authentication
 
 # **Future Works**
 
 - Sign in with OAuth (Google, Facebook)
 - Unit Testing with Mocha and Chai
-- Link up with another user to form a Couple entity, joint account with shared categories
+- ~~Link up with another user to form a Couple entity, joint account with shared categories~~ (Completed as an icing on the cake)
 - Further enhance CSS Bootstrap styling
 - Have a new database schema of "Projects" to contain categories and transactions
 - Have a use case for different _user_permission_: User Vs Admin
