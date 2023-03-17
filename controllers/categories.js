@@ -96,9 +96,20 @@ const edit = async (req,res) => {
     try {
         const id = req.params.id;
         const user_id = req.session.userid;
-        await Category.findByIdAndUpdate(id, req.body, {new:true}).exec();
+        let categoryPresent = await Category.find({
+            user_id: user_id,
+            category_name: req.body.category_name.toUpperCase(),
+        }).exec()
+        console.log(categoryPresent);
+        let msg;
+        if (!categoryPresent.length) {
+            await Category.findByIdAndUpdate(id, {category_name: req.body.category_name.toUpperCase(), budget: req.body.budget}, {new:true}).exec();
+            msg = `You have updated ${req.body.category_name}.`;
+        } else {
+            msg = `There is an existing category with the same name.`;
+        }
         const categories = await Category.find({user_id:user_id}).exec();
-        const context = {msg: `You have updated ${req.body.category_name}.`, categories}
+        const context = {msg: msg, categories}
         res.render("categories/summary",context)
     } catch (error) {
         if (error instanceof mongoose.Error.ValidationError) {
