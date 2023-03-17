@@ -42,6 +42,7 @@
                                 <th scope="col">Date</th>
                                 <th scope="col">Category</th>
                                 <th scope="col">Amount</th>
+                                <th scope="col">User</th>
                                 <th scope="col" colspan="2">Actions</th>
                             </tr>
                         
@@ -57,6 +58,9 @@
                                     </td>
                                     <td>
                                         <%=t.amount%>
+                                    </td>
+                                    <td>
+                                        <%=t.category_id.user_id.username%>
                                     </td>
                                     <td>
                                         <form action="/transactions/<%=t._id%>/edit" method="get">

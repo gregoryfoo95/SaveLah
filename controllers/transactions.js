@@ -20,7 +20,6 @@ const summary = async (req,res) => {
             const couple = await User.find({
             couple_id: user.couple_id
             }).exec();
-            console.log(couple)
 
             if (couple.length === 2) {
                 if (couple[0]._id.equals(user_id)) {
@@ -36,7 +35,7 @@ const summary = async (req,res) => {
         }
         if (pattern) {
             const Re = new RegExp(pattern.toUpperCase());
-            const categories = await Category.find({category_name: Re, user_id: [user_id,partnerUser._id]}).exec();
+            const categories = await Category.find({category_name: Re, user_id: [user_id,partnerUser._id]}).populate("user_id").exec();
             const transactions = await Transaction
             .find()
             .populate(
@@ -44,6 +43,10 @@ const summary = async (req,res) => {
                  match: { 
                     user_id: user_id,
                     category_name: Re,
+                },
+                populate: {
+                    path: "user_id",
+                    select: "username"
                 }
             })
             .exec();
@@ -56,14 +59,19 @@ const summary = async (req,res) => {
             };
             res.render("transactions/summary", context);
         } else {
-            const categories = await Category.find({user_id:[user_id,partnerUser._id]}).exec();
+            const categories = await Category.find({user_id:[user_id,partnerUser._id]}).populate("user_id").exec();
             const transactions = await Transaction
             .find()
-            .populate(
-                {path: "category_id",
-                match: { user_id: [user_id,partnerUser._id] }
+            .populate({
+                path: "category_id",
+                match: { user_id: [user_id,partnerUser._id] },
+                populate: {
+                    path: "user_id",
+                    select: "username"
+                }
             })
             .exec();
+            console.log(transactions);
             const context = {
                 msg: "",
                 transactions: transactions.filter((transaction) => {
@@ -92,7 +100,6 @@ const create = async (req, res) => {
             const couple = await User.find({
             couple_id: user.couple_id
             }).exec();
-            console.log(couple)
 
             if (couple.length === 2) {
                 if (couple[0]._id.equals(user_id)) {
@@ -106,12 +113,16 @@ const create = async (req, res) => {
         } else {
             partnerUser = "";
         }
-        const categories = await Category.find({user_id: [user_id,partnerUser._id]}).exec()
+        const categories = await Category.find({user_id: [user_id,partnerUser._id]}).populate("user_id").exec()
         let transactions = await Transaction
             .find()
-            .populate(
-                {path: "category_id",
-                match: { user_id: [user_id,partnerUser._id] }
+            .populate({
+                path: "category_id",
+                match: { user_id: [user_id,partnerUser._id] },
+                populate: {
+                    path: "user_id",
+                    select: "username"
+                }
             })
             .exec();
         if (amount === "") {
@@ -126,7 +137,7 @@ const create = async (req, res) => {
             return;
         } else if (amount < 0) {
             const context = {
-                msg: "Amount fields should not be left empty.", 
+                msg: "Amount fields should not be negative.", 
                 categories, 
                 transactions: transactions.filter((transaction) => {
                 return transaction.category_id !== null;
@@ -144,9 +155,13 @@ const create = async (req, res) => {
             });
         transactions = await Transaction
             .find()
-            .populate(
-                {path: "category_id",
-                match: { user_id: user_id }
+            .populate({
+                path: "category_id",
+                match: { user_id: [user_id,partnerUser._id] },
+                populate: {
+                    path: "user_id",
+                    select: "username"
+                }
             })
             .exec();
         const msg = `You have added a transaction.`;
@@ -176,7 +191,6 @@ const editForm = async (req,res) => {
             const couple = await User.find({
             couple_id: user.couple_id
             }).exec();
-            console.log(couple)
 
             if (couple.length === 2) {
                 if (couple[0]._id.equals(user_id)) {
@@ -192,17 +206,17 @@ const editForm = async (req,res) => {
         }
         const transaction_id = req.params.id;
         const transaction = await Transaction.findById(transaction_id).populate("category_id").exec();
-        const categories = await Category.find({user_id: [user_id, partnerUser._id]}).exec();
+        const categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
         const context = {msg: "", transaction, categories};
         res.render("transactions/edit", context);
-} catch (error) {
-    if (error instanceof mongoose.Error.ValidationError) {
-            const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
-            res.status(400).send(`Validation Error: ${errorMessage}`);
-        } else {
-            res.status(500).send('Internal Server Error');
-        }
-}
+    } catch (error) {
+        if (error instanceof mongoose.Error.ValidationError) {
+                const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
+                res.status(400).send(`Validation Error: ${errorMessage}`);
+            } else {
+                res.status(500).send('Internal Server Error');
+            }
+    }
 }
 
 const edit = async (req,res) => {
@@ -214,7 +228,6 @@ const edit = async (req,res) => {
             const couple = await User.find({
             couple_id: user.couple_id
             }).exec();
-            console.log(couple)
 
             if (couple.length === 2) {
                 if (couple[0]._id.equals(user_id)) {
@@ -232,12 +245,16 @@ const edit = async (req,res) => {
         const transaction = await Transaction.findByIdAndUpdate(id, req.body, {new:true}).exec();
         const transactions = await Transaction
             .find()
-            .populate(
-                {path: "category_id",
-                match: { user_id: user_id }
+            .populate({
+                path: "category_id",
+                match: { user_id: [user_id,partnerUser._id] },
+                populate: {
+                    path: "user_id",
+                    select: "username"
+                }
             })
             .exec();
-        const categories = await Category.find({user_id: [user_id, partnerUser._id]}).exec();
+        const categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
         const context = {
             msg: `You have updated the transaction.`,
             transactions: transactions.filter((transaction) => {
@@ -266,7 +283,6 @@ const del = async (req,res) => {
             const couple = await User.find({
             couple_id: user.couple_id
             }).exec();
-            console.log(couple)
 
             if (couple.length === 2) {
                 if (couple[0]._id.equals(user_id)) {
@@ -281,12 +297,16 @@ const del = async (req,res) => {
             partnerUser = "";
         }
         await Transaction.findByIdAndDelete(id).exec();
-        const categories = await Category.find({user_id: [user_id, partnerUser._id]}).exec();
+        const categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
         const transactions = await Transaction
             .find()
-            .populate(
-                {path: "category_id",
-                match: { user_id: [user_id, partnerUser._id] }
+            .populate({
+                path: "category_id",
+                match: { user_id: [user_id,partnerUser._id] },
+                populate: {
+                    path: "user_id",
+                    select: "username"
+                }
             })
             .exec();
         const context = {

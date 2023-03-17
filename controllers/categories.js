@@ -19,7 +19,6 @@ const summary = async (req,res) => {
             const couple = await User.find({
             couple_id: user.couple_id
             }).exec();
-            console.log(couple)
 
             if (couple.length === 2) {
                 if (couple[0]._id.equals(user_id)) {
@@ -36,10 +35,14 @@ const summary = async (req,res) => {
         const pattern = req.query.category_name_search;
         if (pattern) {
             const Re = new RegExp(pattern.toUpperCase());
-            const categories = await Category.find({category_name: Re, user_id: [user_id, partnerUser._id]}).exec();
-            res.render("categories/summary", {msg: "", categories});
+            const categories = await Category.find({category_name: Re, user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
+            const context = {
+                msg: "",
+                categories
+            };
+            res.render("categories/summary", context);
         } else {
-            const categories = await Category.find({user_id: [user_id, partnerUser._id]}).exec();
+            const categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
             const context = {
                 msg: "",
                 categories
@@ -66,8 +69,7 @@ const create = async (req, res) => {
             const couple = await User.find({
             couple_id: user.couple_id
             }).exec();
-            console.log(couple)
-
+  
             if (couple.length === 2) {
                 if (couple[0]._id.equals(user_id)) {
                     partnerUser = await User.findById(couple[1]._id).exec();
@@ -80,7 +82,7 @@ const create = async (req, res) => {
         } else {
             partnerUser = "";
         }
-        let categories = await Category.find({user_id: [user_id, partnerUser._id]}).exec();
+        let categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
         const category = await Category.find({category_name: category_name, user_id: [user_id, partnerUser._id]})
         if (category_name === "" || budget === "") {
             const context = {msg: "Category and Budget fields should not be left empty.", categories}
@@ -102,7 +104,7 @@ const create = async (req, res) => {
                 user_id: req.session.userid,
             }
         );
-        categories = await Category.find({user_id: user_id}).exec();    
+        categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();    
         const msg = `You have added ${req.body.category_name}.`;    
         res.render("categories/summary", {msg,categories});
     } catch (error) {
@@ -125,7 +127,6 @@ const editForm = async (req,res) => {
             const couple = await User.find({
             couple_id: user.couple_id
             }).exec();
-            console.log(couple)
 
             if (couple.length === 2) {
                 if (couple[0]._id.equals(user_id)) {
@@ -140,7 +141,7 @@ const editForm = async (req,res) => {
             partnerUser = "";
         }
         const category = await Category.findById(id).exec();
-        const categories = await Category.find({user_id: [user_id, partnerUser._id]}).exec();
+        const categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
         const context = {msg: "", category, categories};
         res.render("categories/edit", context);
     } catch (error) {
@@ -163,7 +164,6 @@ const edit = async (req,res) => {
             const couple = await User.find({
             couple_id: user.couple_id
             }).exec();
-            console.log(couple)
 
             if (couple.length === 2) {
                 if (couple[0]._id.equals(user_id)) {
@@ -188,7 +188,7 @@ const edit = async (req,res) => {
         } else {
             msg = `There is an existing category with the same name.`;
         }
-        const categories = await Category.find({user_id:user_id}).exec();
+        const categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
         const context = {msg: msg, categories}
         res.render("categories/summary",context)
     } catch (error) {
@@ -211,7 +211,6 @@ const del = async (req,res) => {
             const couple = await User.find({
             couple_id: user.couple_id
             }).exec();
-            console.log(couple)
 
             if (couple.length === 2) {
                 if (couple[0]._id.equals(user_id)) {
@@ -230,11 +229,11 @@ const del = async (req,res) => {
             const category = await Category.findById(id).exec();
             const msg = `You have deleted ${category.category_name}.`;
             await Category.findByIdAndDelete(id).exec();
-            const categories = await Category.find({user_id: [user_id, partnerUser._id]}).exec();
+            const categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
             const context = {msg, categories}
             res.render("categories/summary",context);
         } else {
-            const categories = await Category.find({user_id: [user_id, partnerUser._id]}).exec();
+            const categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
             const context = {msg: `You cannot delete this category as there are existing transactions tagged to it.`, categories}
             res.render("categories/summary",context);
         }

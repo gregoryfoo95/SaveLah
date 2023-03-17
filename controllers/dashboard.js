@@ -87,7 +87,7 @@ const getData = async (req) => {
         partnerUser = "";
     }
 
-    const categories = await Category.find({user_id: [user_id, partnerUser._id]}).exec();
+    const categories = await Category.find({user_id: [user_id, partnerUser._id]}).populate("user_id").exec();
     const transactions = await Transaction
             .find()
             .populate(
