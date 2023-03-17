@@ -49,12 +49,32 @@ const getData = async (req) => {
     let deltaArr=[];
     let sum = 0;
     const user_id = req.session.userid;
-    const categories = await Category.find({user_id:user_id}).exec();
+    const user = await User.findById(user_id).exec();
+    let partnerUser;
+    if (user.couple_id) {
+        const couple = await User.find({
+        couple_id: user.couple_id
+        }).exec();
+        console.log(couple)
+
+        if (couple.length === 2) {
+            if (couple[0]._id.equals(user_id)) {
+                partnerUser = await User.findById(couple[1]._id).exec();
+            } else {
+                partnerUser = await User.findById(couple[0]._id).exec();
+            }
+        } else {
+            partnerUser = "";
+        }
+    } else {
+        partnerUser = "";
+    }
+    const categories = await Category.find({user_id: [user_id, partnerUser._id]}).exec();
     const transactions = await Transaction
             .find()
             .populate(
                 {path: "category_id",
-                match: { user_id: user_id }
+                match: { user_id: [user_id, partnerUser._id] }
             })
             .exec();
     categories.forEach((category) => {

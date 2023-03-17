@@ -2,6 +2,7 @@ const User = require("../models/User");
 const dashboardCtrl = require("../controllers/dashboard");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
+const Couple = require("../models/Couple");
 const mongoose = require("mongoose");
 
 /**
@@ -66,9 +67,9 @@ const register = async (req,res) => {
 }
 
 const login = async (req,res) => {
-    const {username,password} = req.body;
-    const user = await User.findOne({ username })
     try {
+        const {username,password} = req.body;
+        const user = await User.findOne({ username });
         if (user===null) {
             const context = {msg: "No user was found"}
             res.render("users/login", context);
@@ -194,6 +195,44 @@ const updateProfile = async (req,res) => {
             },
             {new:true})
             .exec();
+            
+        //experimental from here
+        const userMatch = await User.findOne({
+            username: req.body.partner_username,
+            token: req.body.token
+        }).exec(); //find a user with partner username and token
+        if (userMatch) { //if search is successful
+            if (userMatch.couple_id) { //check if the potential partner has a couple id 
+                await User.findByIdAndUpdate(user_id, {
+                    couple_id: userMatch.couple_id
+                },
+                {new:true})
+                .exec();
+            } else {
+            const coupleGroup = await Couple.create({status: 0});
+            await Promise.all([
+                User.findByIdAndUpdate(user_id, {
+                    couple_id: coupleGroup._id
+                },
+                { new: true })
+                .exec(),
+
+                User.findByIdAndUpdate(userMatch._id, {
+                    couple_id: coupleGroup._id
+                }, 
+                {new:true})
+                .exec()
+                ])
+            }
+        } else {
+            const coupleGroup = await Couple.create({ status: 0 });
+            await User.findByIdAndUpdate(user_id, {
+                couple_id: coupleGroup._id
+            }, {new:true})
+            .exec();
+        }
+
+
         const [data,catArr,budgetArr,spentArr,deltaArr] = await dashboardCtrl.getData(req);
         user = await User.findById(user_id).exec();
         res.render('index', {

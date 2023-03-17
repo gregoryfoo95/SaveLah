@@ -6,7 +6,6 @@ const coupleSchema = new Schema(
     {
         status: {
         type: Number,
-        required: true,
         validate: {
             validator: function (value) {
                 const schema = Joi.number().min(0).max(1).required();

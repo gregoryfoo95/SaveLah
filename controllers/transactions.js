@@ -1,5 +1,6 @@
 const Transaction = require("../models/Transaction");
 const Category = require("../models/Category");
+const User = require("../models/User");
 const mongoose = require("mongoose");
 /**
  *
@@ -13,9 +14,29 @@ const summary = async (req,res) => {
     try {
         const user_id = req.session.userid;
         const pattern = req.query.category_name_search;
+        const user = await User.findById(user_id).exec();
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+            console.log(couple)
+
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
         if (pattern) {
             const Re = new RegExp(pattern.toUpperCase());
-            const categories = await Category.find({category_name: Re, user_id: user_id}).exec();
+            const categories = await Category.find({category_name: Re, user_id: [user_id,partnerUser._id]}).exec();
             const transactions = await Transaction
             .find()
             .populate(
@@ -35,12 +56,12 @@ const summary = async (req,res) => {
             };
             res.render("transactions/summary", context);
         } else {
-            const categories = await Category.find({user_id:user_id}).exec();
+            const categories = await Category.find({user_id:[user_id,partnerUser._id]}).exec();
             const transactions = await Transaction
             .find()
             .populate(
                 {path: "category_id",
-                match: { user_id: user_id }
+                match: { user_id: [user_id,partnerUser._id] }
             })
             .exec();
             const context = {
@@ -65,12 +86,32 @@ const create = async (req, res) => {
     try {
         const { date, amount } = req.body;
         const user_id = req.session.userid;
-        const categories = await Category.find({user_id: user_id}).exec()
+        const user = await User.findById(user_id).exec();
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+            console.log(couple)
+
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
+        const categories = await Category.find({user_id: [user_id,partnerUser._id]}).exec()
         let transactions = await Transaction
             .find()
             .populate(
                 {path: "category_id",
-                match: { user_id: user_id }
+                match: { user_id: [user_id,partnerUser._id] }
             })
             .exec();
         if (amount === "") {
@@ -129,9 +170,29 @@ const create = async (req, res) => {
 const editForm = async (req,res) => {
     try {
         const user_id = req.session.userid;
+         const user = await User.findById(user_id).exec();
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+            console.log(couple)
+
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
         const transaction_id = req.params.id;
         const transaction = await Transaction.findById(transaction_id).populate("category_id").exec();
-        const categories = await Category.find({user_id: user_id}).exec();
+        const categories = await Category.find({user_id: [user_id, partnerUser._id]}).exec();
         const context = {msg: "", transaction, categories};
         res.render("transactions/edit", context);
 } catch (error) {
@@ -147,6 +208,26 @@ const editForm = async (req,res) => {
 const edit = async (req,res) => {
     try {
         const user_id = req.session.userid;
+        const user = await User.findById(user_id).exec();
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+            console.log(couple)
+
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
         const id = req.params.id;
         const transaction = await Transaction.findByIdAndUpdate(id, req.body, {new:true}).exec();
         const transactions = await Transaction
@@ -156,7 +237,7 @@ const edit = async (req,res) => {
                 match: { user_id: user_id }
             })
             .exec();
-        const categories = await Category.find({user_id: user_id}).exec();
+        const categories = await Category.find({user_id: [user_id, partnerUser._id]}).exec();
         const context = {
             msg: `You have updated the transaction.`,
             transactions: transactions.filter((transaction) => {
@@ -179,13 +260,33 @@ const del = async (req,res) => {
     const id = req.params.id;
     try {
         const user_id = req.session.userid;
+        const user = await User.findById(user_id).exec();
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+            console.log(couple)
+
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
         await Transaction.findByIdAndDelete(id).exec();
-        const categories = await Category.find({user_id: user_id}).exec();
+        const categories = await Category.find({user_id: [user_id, partnerUser._id]}).exec();
         const transactions = await Transaction
             .find()
             .populate(
                 {path: "category_id",
-                match: { user_id: user_id }
+                match: { user_id: [user_id, partnerUser._id] }
             })
             .exec();
         const context = {
