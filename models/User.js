@@ -5,21 +5,19 @@ const Joi = require('joi');
 const userSchema = new Schema(
   {
     username: {
-    type: String,
-    required: [true, 'Please provide a username'],
-    unique: true,
-    validate: {
-      validator: function(value) {
-        if (value) {
-          const schema = Joi.string().alphanum().min(1).max(30).required();
-          const { error } = schema.validate(value);
-          return error ? false : true;
-        }
-        return true; // allow empty username
+      type: String,
+      minlength: 1,
+      maxlength:30,
+      unique: true,
+      validate: {
+        validator: function(value) {
+            const schema = Joi.string().min(1).max(30).required();
+            const { error } = schema.validate(value);
+            return error ? false : true;
+        },
+        message: props => `${props.value} is not a valid username!`,
       },
-      message: props => `${props.value} is not a valid username!`,
     },
-  },
     password: { 
       type: String,
       required: true,
@@ -28,10 +26,6 @@ const userSchema = new Schema(
         validator: function(value) {
           const schema = Joi.string().min(8).required();
           const { error } = schema.validate(value);
-          if (value.trim().length > 0) {
-            return true;
-          }
-
           return error ? false : true;
         },
         message: props => `${props.value} is not a valid password!`,

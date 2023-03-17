@@ -25,7 +25,7 @@ const registerPage = async (req,res) => {
 const register = async (req,res) => {
     try {
         const user = await User.find({username: req.body.username}).exec();
-        if (req.body.password === req.body.password2 && !user.length) {
+        if (req.body.password === req.body.password2 && !user.length && req.body.username.length && req.body.monthly_salary) {
             bcrypt.hash(req.body.password, saltRounds, async (err,hash) => {
             await User.create(
                 { username: req.body.username,
@@ -49,13 +49,14 @@ const register = async (req,res) => {
         } else if (new Date(req.body.dob) > new Date()) {
             res.render("users/register", {msg: "Please key in a date before today."});
             return;
+        } else if (!req.body.username.length) {
+            res.render("users/register", {msg: "Please do not leave the username field empty."});
+            return;
         }
     } catch(error) {
         if (error instanceof mongoose.Error.ValidationError) {
             const errorMessage = Object.values(error.errors).map((err) => err.message).join(', ');
             res.status(400).send(`Validation Error: ${errorMessage}`);
-        } else if (error.errors.dob) {
-            res.status(400).send("Validation Error: A future date was entered. Please enter a valid date.")
             return;
         } else {
             res.status(500).send('Internal Server Error');
