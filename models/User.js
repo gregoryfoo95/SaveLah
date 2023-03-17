@@ -28,6 +28,10 @@ const userSchema = new Schema(
         validator: function(value) {
           const schema = Joi.string().min(8).required();
           const { error } = schema.validate(value);
+          if (value.trim().length > 0) {
+            return true;
+          }
+
           return error ? false : true;
         },
         message: props => `${props.value} is not a valid password!`,

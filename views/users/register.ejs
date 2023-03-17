@@ -7,6 +7,9 @@
             <fieldset>
                 <legend>Registration</legend>
                 <label>Username: <input name="username" minlength="1" maxlength="30"></label>
+                <script>
+
+                </script>
                 <br />
                 <label>Password: <input type="password" name="password" minlength="8"  /></label>
                 <br />
@@ -23,7 +26,7 @@
                 <br />
                 <label>Date of Birth: <input type="date" name="dob" id="dob" /></label>
                 <script>
-                    $('#date').val(new Date().toJSON().slice(0, 10));
+                    $('#dob').val(new Date().toJSON().slice(0, 10));
                     var today = new Date().toISOString().split('T')[0];
                     document.getElementById("dob").setAttribute('max', today);
                 </script>
