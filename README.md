@@ -11,7 +11,7 @@ This project is a traditional Create-Read-Update-Delete (CRUD) Web-App that resp
 
 # **Deployment** 
 
-The app is deployed on <a href="https://tame-ruby-ostrich-robe.cyclic.app">Cyclic</a>.
+The app is deployed on <a href="https://savelah.cyclic.app">Cyclic</a>.
 
 A development Trello-styled whiteboard for the planning phase can be found <a href="https://github.com/users/gregoryfoo95/projects/1">here.</a>
 
