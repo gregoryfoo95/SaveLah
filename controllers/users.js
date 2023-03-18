@@ -70,18 +70,37 @@ const login = async (req,res) => {
     try {
         const {username,password} = req.body;
         const user = await User.findOne({ username });
+        const user_id = user._id;
         if (user===null) {
             const context = {msg: "No user was found"}
             res.render("users/login", context);
             return;
         }
+        let partnerUser;
+        if (user.couple_id) {
+            const couple = await User.find({
+            couple_id: user.couple_id
+            }).exec();
+            if (couple.length === 2) {
+                if (couple[0]._id.equals(user_id)) {
+                    partnerUser = await User.findById(couple[1]._id).exec();
+                } else {
+                    partnerUser = await User.findById(couple[0]._id).exec();
+                }
+            } else {
+                partnerUser = "";
+            }
+        } else {
+            partnerUser = "";
+        }
         bcrypt.compare(password, user.password, async (err, result) => {
             if (result) {
                 req.session.userid = user._id;
                 req.session.user_permission = user.user_permission;
+                const partner_username = partnerUser.username;
                 const user_permission = user.user_permission;
                 const [data,catArr,budgetArr,spentArr,deltaArr] = await dashboardCtrl.getData(req);
-                res.render("index", {user,username,user_permission,data,catArr,budgetArr,spentArr,deltaArr,msg:""});
+                res.render("index", {user,username,partner_username,user_permission,data,catArr,budgetArr,spentArr,deltaArr,msg:""});
             } else {
                 const context = { msg: "Password is wrong" };
                 res.render("users/login", context);

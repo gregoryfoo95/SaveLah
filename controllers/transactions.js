@@ -71,7 +71,6 @@ const summary = async (req,res) => {
                 }
             })
             .exec();
-            console.log(transactions);
             const context = {
                 msg: "",
                 transactions: transactions.filter((transaction) => {
