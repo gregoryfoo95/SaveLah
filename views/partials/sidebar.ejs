@@ -1,24 +1,33 @@
-<!-- Sidebar -->
-<div class="col-md-auto bg-light d-none d-md-block sidebar">
-    <div class="left-sidebar">
-        <ul class="nav flex-column sidebar-nav">
-            <li class="nav-item">
+
+    <!-- Sidebar -->
+    <nav id="sidebar">
+
+        <ul class="list-unstyled components">
+            <li class="sidebar-item">
                 <a class="sidebarBtn" href="/categories/all">
                     Categories
                 </a>
             </li>
-            <br>
-            <li class="nav-item">
+            <li class="sidebar-item">
                 <a class="sidebarBtn" href="/transactions/all">
                     Transactions
                 </a>
             </li>
-            <br>
-            <li class="nav-item">
+            <li class="side-item">
                 <a class="sidebarBtn" href="/user/profile/<%= user._id%>/edit">
                     Profile
                 </a>
             </li>
         </ul>
-    </div>
-</div>
+    </nav>
+
+
+<script>
+    $(document).ready(function () {
+
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+
+    });
+</script>
